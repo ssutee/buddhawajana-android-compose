@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">พุทธวจน</string>
+    <string name="books">หนังสือ</string>
+    <string name="audio">ไฟล์เสียง</string>
+    <string name="youtube">ช่องยูทูป</string>
+    <string name="downloaded">ดาวน์โหลดแล้ว</string>
+    <string name="download_again">ดาวน์โหลดใหม่</string>
+    <string name="delete">ลบ</string>
+    <string name="more">มากกว่า</string>
+    <string name="download_all">ดาวน์โหลดทั้งหมด</string>
+    <string name="view_count">ดูทั้งหมด %1$d ครั้ง</string>
+    <string name="download">ดาวน์โหลด</string>
+    <string name="play_audio">เล่นไฟล์เสียง</string>
+    <string name="buddhawajana_real">พุทธวจนเรียล</string>
+</resources>
