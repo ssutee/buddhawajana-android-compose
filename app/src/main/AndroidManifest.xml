@@ -16,7 +16,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:theme="@style/Theme.AppCompat.Light"
+            android:theme="@style/Theme.AppCompat"
             android:name=".ui.Mp3PlayerActivity"
             android:exported="false"
             android:launchMode="singleTop" />
@@ -33,7 +33,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.touchsi.buddhawajana.provider"
+            android:authorities="com.watanpp.buddhawajana.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -44,11 +44,6 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission
-        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
-        tools:ignore="ScopedStorage" />
-    <uses-permission android:name="android.permission.INTERNET" />
-
 
 
 </manifest>

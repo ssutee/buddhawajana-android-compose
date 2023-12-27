@@ -5,15 +5,15 @@ plugins {
 }
 
 android {
-    namespace 'com.touchsi.buddhawajana'
+    namespace 'com.watnapp.buddhawajana'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.touchsi.buddhawajana"
+        applicationId "com.watnapp.buddhawajana"
         minSdk 24
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        versionCode 14001
+        versionName "1.4.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -106,7 +106,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-swiperefresh:0.30.0"
     implementation 'com.github.afreakyelf:Pdf-Viewer:v1.0.7'
     implementation "androidx.window:window:1.0.0"
-    implementation 'com.github.mergehez:ArgPlayer:v3.1'
+    implementation 'com.github.ssutee:ArgPlayer:v3.1.1'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
