@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -123,6 +122,7 @@ fun AudioScreen(
     }
 
     Scaffold(
+        contentWindowInsets = NoWindowInsets,
         content = { padding -> Box(
             modifier = Modifier.padding(padding),
             contentAlignment = Alignment.Center
@@ -242,6 +242,7 @@ fun PlaylistScreen(
     }
 
     Scaffold(
+        contentWindowInsets = NoWindowInsets,
         content = { padding ->
             Box(
                 modifier = Modifier
@@ -282,34 +283,16 @@ fun OverflowMenu(onActionSelected: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AudioTopBar(
     title: String, showMenu: Boolean,
     isDownloading: Boolean,
+    modifier: Modifier = Modifier,
     onActionSelected: () -> Unit
 ) {
-    TopAppBar(
-        title = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_logo),
-                    contentDescription = "logo",
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(30.dp)
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = title,
-                    fontSize = 18.sp,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(id = R.color.topbar_bg)),
+    BuddhawajanaTopBar(
+        title = title,
+        modifier = modifier,
         actions = {
             if (showMenu && !isDownloading) {
                 OverflowMenu(onActionSelected)
@@ -336,7 +319,7 @@ fun AudioList(
     fun refresh() = scope.launch(Dispatchers.IO) { vm.refresh(owner, albumId) }
     val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = ::refresh)
     Column(modifier = Modifier
-        .padding(8.dp)
+        .padding(horizontal = 8.dp)
         .fillMaxSize()) {
         Box(
             Modifier
@@ -431,6 +414,7 @@ fun AlbumScreen(
         }
     }
     Scaffold(
+        contentWindowInsets = NoWindowInsets,
         content = { padding ->
             Box(modifier = modifier.padding(padding)) {
                 AlbumList(vm, albums, modifier, onItemSelected)
@@ -451,7 +435,7 @@ fun AlbumList(
     val refreshScope = rememberCoroutineScope()
     fun refresh() = refreshScope.launch(Dispatchers.IO) { vm.refresh(owner) }
     val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = ::refresh)
-    Column(modifier = modifier.padding(8.dp)) {
+    Column(modifier = modifier.padding(horizontal = 8.dp)) {
         Box(Modifier.pullRefresh(state)) {
             LazyColumn(
                 modifier = Modifier
@@ -558,6 +542,7 @@ fun AlbumWithPlaylistScreen(
     }
 
     Scaffold(
+        contentWindowInsets = NoWindowInsets,
         content = { padding ->
             Row(
                 modifier = Modifier

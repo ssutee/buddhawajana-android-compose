@@ -16,7 +16,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,7 +57,6 @@ fun AudioScreenPreview() {
     AudioScreen(windowSize = WindowSize.Expanded)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun YoutubeScreen() {
     val context = LocalContext.current
@@ -68,21 +66,10 @@ fun YoutubeScreen() {
     }
 
     Scaffold(
+        contentWindowInsets = NoWindowInsets,
         topBar = {
-            TopAppBar(
-                title =
-                { Row(verticalAlignment = Alignment.CenterVertically) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_logo),
-                        contentDescription = "logo",
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .width(30.dp)
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Text(text = stringResource(R.string.app_name), fontSize = 18.sp)
-                } },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(id = R.color.topbar_bg))
+            BuddhawajanaTopBar(
+                title = stringResource(R.string.app_name)
             )
         },
         content = { padding ->

@@ -125,6 +125,7 @@ fun MainScreen(windowSize: WindowSize) {
     }
 
     Scaffold(
+        contentWindowInsets = NoWindowInsets,
         bottomBar = { BottomNavigationBar(navController) },
         content = { padding ->
             Box(modifier = Modifier.padding(padding)) {

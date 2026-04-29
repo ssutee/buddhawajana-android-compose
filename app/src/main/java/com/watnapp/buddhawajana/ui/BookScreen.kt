@@ -5,7 +5,6 @@ import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -61,6 +59,7 @@ fun BookScreen(vm: BookViewModel = koinViewModel()) {
     }
 
     Scaffold(
+        contentWindowInsets = NoWindowInsets,
         topBar = { BookTopBar() },
         content = {padding ->
             Box(modifier = Modifier.padding(padding)) {
@@ -70,23 +69,11 @@ fun BookScreen(vm: BookViewModel = koinViewModel()) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun BookTopBar() {
-    TopAppBar(
-        title =
-        { Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_logo),
-                contentDescription = "logo",
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(30.dp)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(text = stringResource(R.string.app_name), fontSize = 18.sp)
-        } },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(id = R.color.topbar_bg))
+private fun BookTopBar(modifier: Modifier = Modifier) {
+    BuddhawajanaTopBar(
+        title = stringResource(R.string.app_name),
+        modifier = modifier
     )
 }
 
@@ -136,7 +123,7 @@ private fun BookList(vm: BookViewModel, books: List<BookEntity>, owner: Lifecycl
     val refreshScope = rememberCoroutineScope()
     fun refresh() = refreshScope.launch { vm.refresh(owner) }
     val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = ::refresh)
-    Column(modifier = Modifier.padding(8.dp)) {
+    Column(modifier = Modifier.padding(horizontal = 8.dp)) {
         Box(Modifier.pullRefresh(state)) {
             LazyColumn(modifier = Modifier.fillMaxHeight()) {
                 items(books) { book ->
@@ -238,4 +225,3 @@ private fun BookList(vm: BookViewModel, books: List<BookEntity>, owner: Lifecycl
         }
     }
 }
-

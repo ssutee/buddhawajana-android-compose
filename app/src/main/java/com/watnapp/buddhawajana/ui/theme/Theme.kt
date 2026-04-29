@@ -99,6 +99,7 @@ fun BuddhawajanaTheme(
         val currentWindow = (view.context as? Activity)?.window
             ?: throw Exception("Not in an activity - unable to get Window reference")
         SideEffect {
+            WindowCompat.setDecorFitsSystemWindows(currentWindow, true)
             /* the default code did the same cast here - might as well use our new variable! */
             currentWindow.statusBarColor = colorScheme.primary.toArgb()
             /* accessing the insets controller to change appearance of the status bar, with 100% less deprecation warnings */
