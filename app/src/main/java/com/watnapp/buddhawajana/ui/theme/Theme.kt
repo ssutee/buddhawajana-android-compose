@@ -101,6 +101,7 @@ fun BuddhawajanaTheme(
         SideEffect {
             WindowCompat.setDecorFitsSystemWindows(currentWindow, true)
             /* the default code did the same cast here - might as well use our new variable! */
+            @Suppress("DEPRECATION")
             currentWindow.statusBarColor = colorScheme.primary.toArgb()
             /* accessing the insets controller to change appearance of the status bar, with 100% less deprecation warnings */
             WindowCompat.getInsetsController(currentWindow, view).isAppearanceLightStatusBars =

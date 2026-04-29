@@ -17,6 +17,7 @@ data class BookEntity(
     @ColumnInfo(name = "progress") var progress: Int = 0,
     @ColumnInfo(name = "status") var status: Int = DownloadableViewModel.Status.IDLE.value
 ) {
+    @Ignore
     constructor() : this(0, 0, 0)
 
     @ColumnInfo(name = "title") lateinit var title: String
@@ -71,4 +72,3 @@ interface BookDao {
     @Query("SELECT * from book ORDER BY order_number")
     fun list(): Flow<List<BookEntity>>
 }
-

@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
     alias(libs.plugins.compose.compiler)
 }
 
@@ -11,31 +11,25 @@ composeCompiler {
 }
 
 android {
-    namespace 'com.watnapp.buddhawajana'
-    compileSdk libs.versions.compileSdk.get().toInteger()
+    namespace = 'com.watnapp.buddhawajana'
+    compileSdk = libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
         applicationId "com.watnapp.buddhawajana"
-        minSdk libs.versions.minSdk.get().toInteger()
-        targetSdk libs.versions.targetSdk.get().toInteger()
+        minSdk = libs.versions.minSdk.get().toInteger()
+        targetSdk = libs.versions.targetSdk.get().toInteger()
         versionCode libs.versions.versionCode.get().toInteger()
         versionName libs.versions.versionName.get().toString()
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
-            useSupportLibrary true
+            useSupportLibrary = true
         }
 
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
-        }
-    }
-
-    kapt {
-        arguments {
-            arg("room.schemaLocation", "$projectDir/schemas")
         }
     }
 
@@ -53,10 +47,10 @@ android {
         jvmTarget = '1.8'
     }
     buildFeatures {
-        compose true
+        compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.4.3'
+        kotlinCompilerExtensionVersion = '1.4.3'
     }
     packagingOptions {
         resources {
@@ -76,7 +70,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    kapt "androidx.room:room-compiler:$room_version"
+    ksp "androidx.room:room-compiler:$room_version"
 
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.0'
     implementation 'androidx.activity:activity-compose:1.6.1'
