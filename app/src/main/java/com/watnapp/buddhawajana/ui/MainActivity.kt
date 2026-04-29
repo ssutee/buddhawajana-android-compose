@@ -5,8 +5,10 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -67,13 +69,17 @@ fun NavigationGraph(navController: NavHostController, windowSize: WindowSize) {
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
+    val barColor = colorResource(id = R.color.topbar_bg)
     val items = listOf(
         NavigationItem.Books,
         NavigationItem.Audio,
         NavigationItem.Youtube
     )
     BottomNavigation(
-        backgroundColor = colorResource(id = R.color.topbar_bg),
+        modifier = Modifier
+            .background(barColor)
+            .navigationBarsPadding(),
+        backgroundColor = barColor,
         contentColor = Color.Black
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
