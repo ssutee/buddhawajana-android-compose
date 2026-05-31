@@ -49,3 +49,9 @@ google-services.json
 # Android Profiling
 *.hprof
 
+
+# Claude memory compiler (personal, self-contained clone with own .git)
+/claude-memory-compiler/
+
+# Superpowers brainstorm visual companion
+/.superpowers/
