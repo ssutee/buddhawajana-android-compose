@@ -1,5 +1,5 @@
 pluginManagement {
-    // includeBuild("build-logic") — enabled in Task 2
+    includeBuild("build-logic")
     repositories {
         google()
         mavenCentral()
