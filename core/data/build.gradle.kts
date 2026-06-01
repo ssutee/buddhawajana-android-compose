@@ -4,11 +4,6 @@ plugins {
 }
 android {
     namespace = "com.watnapp.buddhawajana.core.data"
-    defaultConfig {
-        ksp {
-            arg("room.schemaLocation", "$projectDir/schemas")
-        }
-    }
 }
 dependencies {
     implementation(project(":core:model"))

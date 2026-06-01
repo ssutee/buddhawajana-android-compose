@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AudioDao {
     @Query("SELECT * FROM audio WHERE album_id = :albumId ORDER BY audio_id")
-    fun stream(albumId: String): Flow<List<AudioEntity>>
+    fun stream(albumId: Long): Flow<List<AudioEntity>>
 
     @Insert(onConflict = REPLACE)
     suspend fun upsertAll(items: List<AudioEntity>)
