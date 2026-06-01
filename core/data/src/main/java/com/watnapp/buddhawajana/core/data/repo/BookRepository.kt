@@ -1,5 +1,6 @@
 package com.watnapp.buddhawajana.core.data.repo
 
+import com.watnapp.buddhawajana.core.common.runCatchingCancellable
 import com.watnapp.buddhawajana.core.data.db.BookDao
 import com.watnapp.buddhawajana.core.data.mapper.toEntity
 import com.watnapp.buddhawajana.core.data.mapper.toModel
@@ -35,7 +36,7 @@ class BookRepository(
         entities.map { it.toModel() }
     }
 
-    override suspend fun refresh(): Result<Unit> = runCatching {
+    override suspend fun refresh(): Result<Unit> = runCatchingCancellable {
         val dtos = service.getBooks()
         val existing = dao.getAllOnce().associateBy { it.bookId }
 

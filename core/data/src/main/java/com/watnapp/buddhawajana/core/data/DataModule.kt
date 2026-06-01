@@ -1,8 +1,6 @@
 package com.watnapp.buddhawajana.core.data
 
 import androidx.room.Room
-import com.watnapp.buddhawajana.core.common.DefaultDispatcherProvider
-import com.watnapp.buddhawajana.core.common.DispatcherProvider
 import com.watnapp.buddhawajana.core.data.db.AppDatabase
 import com.watnapp.buddhawajana.core.data.repo.AlbumRepository
 import com.watnapp.buddhawajana.core.data.repo.AudioRepository
@@ -11,7 +9,6 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 val dataModule = module {
-    single<DispatcherProvider> { DefaultDispatcherProvider() }
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, AppDatabase.NAME)
             .addMigrations(AppDatabase.MIGRATION_1_2)

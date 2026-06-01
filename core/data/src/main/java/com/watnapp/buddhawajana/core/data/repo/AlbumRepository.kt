@@ -1,5 +1,6 @@
 package com.watnapp.buddhawajana.core.data.repo
 
+import com.watnapp.buddhawajana.core.common.runCatchingCancellable
 import com.watnapp.buddhawajana.core.data.db.AlbumDao
 import com.watnapp.buddhawajana.core.data.mapper.toEntity
 import com.watnapp.buddhawajana.core.data.mapper.toModel
@@ -23,7 +24,7 @@ class AlbumRepository(
         entities.map { it.toModel() }
     }
 
-    override suspend fun refresh(): Result<Unit> = runCatching {
+    override suspend fun refresh(): Result<Unit> = runCatchingCancellable {
         val dtos = service.getAlbums()
         val entities = dtos.map { it.toEntity() }
         dao.upsertAll(entities)

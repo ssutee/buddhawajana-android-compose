@@ -1,5 +1,6 @@
 package com.watnapp.buddhawajana.core.data.repo
 
+import com.watnapp.buddhawajana.core.common.runCatchingCancellable
 import com.watnapp.buddhawajana.core.data.db.AudioDao
 import com.watnapp.buddhawajana.core.data.mapper.toEntity
 import com.watnapp.buddhawajana.core.data.mapper.toModel
@@ -30,7 +31,7 @@ class AudioRepository(
             entities.map { it.toModel() }
         }
 
-    suspend fun refresh(albumId: String): Result<Unit> = runCatching {
+    suspend fun refresh(albumId: String): Result<Unit> = runCatchingCancellable {
         val dtos = service.getAudios(albumId)
         val albumIdLong = albumId.toLong()
         val existing = dao.getAllOnce(albumIdLong).associateBy { it.audioId }
