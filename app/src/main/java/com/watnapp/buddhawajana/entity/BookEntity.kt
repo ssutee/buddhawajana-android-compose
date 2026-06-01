@@ -4,7 +4,6 @@ import androidx.room.*
 import android.content.Context
 import android.os.Build
 import android.os.Environment
-import androidx.room.OnConflictStrategy.IGNORE
 import com.watnapp.buddhawajana.StorageHelper
 import com.watnapp.buddhawajana.vm.DownloadableViewModel
 import kotlinx.coroutines.flow.Flow
@@ -54,10 +53,10 @@ interface BookDao {
     @Query("SELECT * from book WHERE book_id = :bookId")
     fun get(bookId: Long): BookEntity
 
-    @Insert(onConflict = IGNORE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(bookEntity: BookEntity)
 
-    @Update(onConflict = IGNORE)
+    @Update(onConflict = OnConflictStrategy.IGNORE)
     fun update(bookEntity: BookEntity)
 
     @Query("UPDATE book SET progress = :progress WHERE book_id = :bookId")
