@@ -14,8 +14,8 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         val libs = extensions.getByType(VersionCatalogsExtension::class.java).named("libs")
 
         extensions.configure<LibraryExtension> {
-            compileSdk = 36
-            defaultConfig { minSdk = 24 }
+            compileSdk = libs.findVersion("compileSdk").get().requiredVersion.toInt()
+            defaultConfig { minSdk = libs.findVersion("minSdk").get().requiredVersion.toInt() }
             compileOptions {
                 sourceCompatibility = org.gradle.api.JavaVersion.VERSION_17
                 targetCompatibility = org.gradle.api.JavaVersion.VERSION_17
