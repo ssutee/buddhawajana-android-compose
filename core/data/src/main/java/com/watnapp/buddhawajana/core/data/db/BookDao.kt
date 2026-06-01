@@ -11,6 +11,9 @@ interface BookDao {
     @Query("SELECT * FROM book ORDER BY order_number")
     fun stream(): Flow<List<BookEntity>>
 
+    @Query("SELECT * FROM book")
+    suspend fun getAllOnce(): List<BookEntity>
+
     @Insert(onConflict = REPLACE)
     suspend fun upsertAll(items: List<BookEntity>)
 

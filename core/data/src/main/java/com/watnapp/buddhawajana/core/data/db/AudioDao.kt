@@ -11,6 +11,9 @@ interface AudioDao {
     @Query("SELECT * FROM audio WHERE album_id = :albumId ORDER BY audio_id")
     fun stream(albumId: Long): Flow<List<AudioEntity>>
 
+    @Query("SELECT * FROM audio WHERE album_id = :albumId")
+    suspend fun getAllOnce(albumId: Long): List<AudioEntity>
+
     @Insert(onConflict = REPLACE)
     suspend fun upsertAll(items: List<AudioEntity>)
 
