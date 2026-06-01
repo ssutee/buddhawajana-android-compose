@@ -17,7 +17,7 @@
 ## Conventions used by every task
 
 - **Pinned versions** live in `gradle/libs.versions.toml` (Task 1). All later modules reference `libs.*` aliases — never hardcode versions.
-- **Package root:** reuse the existing app package. Confirm it in Task 0; this plan assumes `com.watna.buddhawajana`. If the actual root differs, substitute it everywhere.
+- **Package root:** `com.watnapp.buddhawajana` (confirmed from `app/build.gradle` namespace/applicationId). JDK confirmed 21 (≥17 OK).
 - **Build check command** (used as the "test" for Gradle-structural tasks): `./gradlew :MODULE:assembleDebug` or `./gradlew build` as noted.
 - **Unit test command:** `./gradlew :MODULE:testDebugUnitTest --tests "FQN"`.
 - Commit after every task with the exact message shown.
@@ -58,7 +58,7 @@ app/src/main/java/.../ (existing ui/ vm/ repository/ api/ entity/ — moved into
 - [ ] **Step 1: Confirm the app package root**
 
 Run: `grep -m1 'namespace' app/build.gradle` and `grep -m1 'applicationId' app/build.gradle`
-Expected: prints the namespace/applicationId. Record it. This plan uses `com.watna.buddhawajana` as a placeholder — replace with the real value everywhere below.
+Expected: prints the namespace/applicationId. Record it. This plan uses `com.watnapp.buddhawajana` as a placeholder — replace with the real value everywhere below.
 
 - [ ] **Step 2: Record the current dependency list and baseline build**
 
@@ -414,7 +414,7 @@ plugins { id("buddhawajana.kotlin.library") }
 Create `core/model/src/main/kotlin/com/watna/buddhawajana/core/model/Book.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.model
+package com.watnapp.buddhawajana.core.model
 
 data class Book(
     val id: String,
@@ -430,7 +430,7 @@ data class Book(
 Create `core/model/src/main/kotlin/com/watna/buddhawajana/core/model/Album.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.model
+package com.watnapp.buddhawajana.core.model
 
 data class Album(
     val id: String,
@@ -444,7 +444,7 @@ data class Album(
 Create `core/model/src/main/kotlin/com/watna/buddhawajana/core/model/Audio.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.model
+package com.watnapp.buddhawajana.core.model
 
 data class Audio(
     val id: String,
@@ -491,7 +491,7 @@ dependencies {
 Create `core/common/src/test/kotlin/com/watna/buddhawajana/core/common/DispatcherProviderTest.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.common
+package com.watnapp.buddhawajana.core.common
 
 import kotlinx.coroutines.Dispatchers
 import org.junit.Assert.assertEquals
@@ -518,7 +518,7 @@ Expected: FAIL — `DefaultDispatcherProvider` / `DispatcherProvider` unresolved
 Create `core/common/src/main/kotlin/com/watna/buddhawajana/core/common/DispatcherProvider.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.common
+package com.watnapp.buddhawajana.core.common
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -570,7 +570,7 @@ Create `core/network/build.gradle.kts`:
 plugins {
     id("buddhawajana.android.library")
 }
-android { namespace = "com.watna.buddhawajana.core.network" }
+android { namespace = "com.watnapp.buddhawajana.core.network" }
 dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:common"))
@@ -597,7 +597,7 @@ Create `core/network/src/main/AndroidManifest.xml`:
 Create `core/network/src/main/java/com/watna/buddhawajana/core/network/dto/BookDto.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.network.dto
+package com.watnapp.buddhawajana.core.network.dto
 
 import com.squareup.moshi.Json
 
@@ -615,7 +615,7 @@ data class BookDto(
 Create `AlbumDto.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.network.dto
+package com.watnapp.buddhawajana.core.network.dto
 
 import com.squareup.moshi.Json
 
@@ -630,7 +630,7 @@ data class AlbumDto(
 Create `AudioDto.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.network.dto
+package com.watnapp.buddhawajana.core.network.dto
 
 import com.squareup.moshi.Json
 
@@ -646,9 +646,9 @@ data class AudioDto(
 Create `core/network/src/main/java/com/watna/buddhawajana/core/network/BookService.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.network
+package com.watnapp.buddhawajana.core.network
 
-import com.watna.buddhawajana.core.network.dto.BookDto
+import com.watnapp.buddhawajana.core.network.dto.BookDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -664,10 +664,10 @@ interface BookService {
 Create `AudioService.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.network
+package com.watnapp.buddhawajana.core.network
 
-import com.watna.buddhawajana.core.network.dto.AlbumDto
-import com.watna.buddhawajana.core.network.dto.AudioDto
+import com.watnapp.buddhawajana.core.network.dto.AlbumDto
+import com.watnapp.buddhawajana.core.network.dto.AudioDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 
@@ -685,7 +685,7 @@ interface AudioService {
 Create `NetworkModule.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.network
+package com.watnapp.buddhawajana.core.network
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -730,9 +730,9 @@ val networkModule = module {
 Create `core/network/src/test/java/com/watna/buddhawajana/core/network/BookServiceContractTest.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.network
+package com.watnapp.buddhawajana.core.network
 
-import com.watna.buddhawajana.core.network.dto.BookDto
+import com.watnapp.buddhawajana.core.network.dto.BookDto
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -789,7 +789,7 @@ plugins {
     id("buddhawajana.android.library")
     alias(libs.plugins.ksp)
 }
-android { namespace = "com.watna.buddhawajana.core.data" }
+android { namespace = "com.watnapp.buddhawajana.core.data" }
 dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:common"))
@@ -813,7 +813,7 @@ Create `core/data/src/main/AndroidManifest.xml`:
 Create `core/data/src/main/java/com/watna/buddhawajana/core/data/db/BookEntity.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.data.db
+package com.watnapp.buddhawajana.core.data.db
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -838,7 +838,7 @@ data class BookEntity(
 Create `BookDao.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.data.db
+package com.watnapp.buddhawajana.core.data.db
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -866,7 +866,7 @@ interface BookDao {
 Create `AppDatabase.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.data.db
+package com.watnapp.buddhawajana.core.data.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
@@ -903,17 +903,17 @@ abstract class AppDatabase : RoomDatabase() {
 Create `core/data/src/main/java/com/watna/buddhawajana/core/data/mapper/Mappers.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.data.mapper
+package com.watnapp.buddhawajana.core.data.mapper
 
-import com.watna.buddhawajana.core.data.db.AlbumEntity
-import com.watna.buddhawajana.core.data.db.AudioEntity
-import com.watna.buddhawajana.core.data.db.BookEntity
-import com.watna.buddhawajana.core.model.Album
-import com.watna.buddhawajana.core.model.Audio
-import com.watna.buddhawajana.core.model.Book
-import com.watna.buddhawajana.core.network.dto.AlbumDto
-import com.watna.buddhawajana.core.network.dto.AudioDto
-import com.watna.buddhawajana.core.network.dto.BookDto
+import com.watnapp.buddhawajana.core.data.db.AlbumEntity
+import com.watnapp.buddhawajana.core.data.db.AudioEntity
+import com.watnapp.buddhawajana.core.data.db.BookEntity
+import com.watnapp.buddhawajana.core.model.Album
+import com.watnapp.buddhawajana.core.model.Audio
+import com.watnapp.buddhawajana.core.model.Book
+import com.watnapp.buddhawajana.core.network.dto.AlbumDto
+import com.watnapp.buddhawajana.core.network.dto.AudioDto
+import com.watnapp.buddhawajana.core.network.dto.BookDto
 
 fun BookDto.toEntity() = BookEntity(
     bookId = id,
@@ -941,9 +941,9 @@ fun AudioEntity.toModel() = Audio(id = audioId, albumId = albumId, title = title
 Create `core/data/src/test/java/com/watna/buddhawajana/core/data/mapper/MappersTest.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.data.mapper
+package com.watnapp.buddhawajana.core.data.mapper
 
-import com.watna.buddhawajana.core.network.dto.BookDto
+import com.watnapp.buddhawajana.core.network.dto.BookDto
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -988,7 +988,7 @@ git commit -m "feat(core:data): Room entities/DAOs (Flow) + migration-preserving
 Create `core/data/src/main/java/com/watna/buddhawajana/core/data/repo/Repository.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.data.repo
+package com.watnapp.buddhawajana.core.data.repo
 
 import kotlinx.coroutines.flow.Flow
 
@@ -1003,13 +1003,13 @@ interface Repository<T> {
 Create `core/data/src/test/java/com/watna/buddhawajana/core/data/repo/BookRepositoryTest.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.data.repo
+package com.watnapp.buddhawajana.core.data.repo
 
 import app.cash.turbine.test
-import com.watna.buddhawajana.core.data.db.BookDao
-import com.watna.buddhawajana.core.data.db.BookEntity
-import com.watna.buddhawajana.core.network.BookService
-import com.watna.buddhawajana.core.network.dto.BookDto
+import com.watnapp.buddhawajana.core.data.db.BookDao
+import com.watnapp.buddhawajana.core.data.db.BookEntity
+import com.watnapp.buddhawajana.core.network.BookService
+import com.watnapp.buddhawajana.core.network.dto.BookDto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.test.runTest
@@ -1066,13 +1066,13 @@ Expected: FAIL — `BookRepository` unresolved.
 Create `core/data/src/main/java/com/watna/buddhawajana/core/data/repo/BookRepository.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.data.repo
+package com.watnapp.buddhawajana.core.data.repo
 
-import com.watna.buddhawajana.core.data.db.BookDao
-import com.watna.buddhawajana.core.data.mapper.toEntity
-import com.watna.buddhawajana.core.data.mapper.toModel
-import com.watna.buddhawajana.core.model.Book
-import com.watna.buddhawajana.core.network.BookService
+import com.watnapp.buddhawajana.core.data.db.BookDao
+import com.watnapp.buddhawajana.core.data.mapper.toEntity
+import com.watnapp.buddhawajana.core.data.mapper.toModel
+import com.watnapp.buddhawajana.core.model.Book
+import com.watnapp.buddhawajana.core.network.BookService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -1100,13 +1100,13 @@ Expected: PASS (both tests).
 Create `AlbumRepository.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.data.repo
+package com.watnapp.buddhawajana.core.data.repo
 
-import com.watna.buddhawajana.core.data.db.AlbumDao
-import com.watna.buddhawajana.core.data.mapper.toEntity
-import com.watna.buddhawajana.core.data.mapper.toModel
-import com.watna.buddhawajana.core.model.Album
-import com.watna.buddhawajana.core.network.AudioService
+import com.watnapp.buddhawajana.core.data.db.AlbumDao
+import com.watnapp.buddhawajana.core.data.mapper.toEntity
+import com.watnapp.buddhawajana.core.data.mapper.toModel
+import com.watnapp.buddhawajana.core.model.Album
+import com.watnapp.buddhawajana.core.network.AudioService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -1124,13 +1124,13 @@ class AlbumRepository(
 Create `AudioRepository.kt` (audios are per-album, so `refresh` takes an albumId):
 
 ```kotlin
-package com.watna.buddhawajana.core.data.repo
+package com.watnapp.buddhawajana.core.data.repo
 
-import com.watna.buddhawajana.core.data.db.AudioDao
-import com.watna.buddhawajana.core.data.mapper.toEntity
-import com.watna.buddhawajana.core.data.mapper.toModel
-import com.watna.buddhawajana.core.model.Audio
-import com.watna.buddhawajana.core.network.AudioService
+import com.watnapp.buddhawajana.core.data.db.AudioDao
+import com.watnapp.buddhawajana.core.data.mapper.toEntity
+import com.watnapp.buddhawajana.core.data.mapper.toModel
+import com.watnapp.buddhawajana.core.model.Audio
+import com.watnapp.buddhawajana.core.network.AudioService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -1150,15 +1150,15 @@ class AudioRepository(
 Create `DataModule.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.data
+package com.watnapp.buddhawajana.core.data
 
 import androidx.room.Room
-import com.watna.buddhawajana.core.common.DefaultDispatcherProvider
-import com.watna.buddhawajana.core.common.DispatcherProvider
-import com.watna.buddhawajana.core.data.db.AppDatabase
-import com.watna.buddhawajana.core.data.repo.AlbumRepository
-import com.watna.buddhawajana.core.data.repo.AudioRepository
-import com.watna.buddhawajana.core.data.repo.BookRepository
+import com.watnapp.buddhawajana.core.common.DefaultDispatcherProvider
+import com.watnapp.buddhawajana.core.common.DispatcherProvider
+import com.watnapp.buddhawajana.core.data.db.AppDatabase
+import com.watnapp.buddhawajana.core.data.repo.AlbumRepository
+import com.watnapp.buddhawajana.core.data.repo.AudioRepository
+import com.watnapp.buddhawajana.core.data.repo.BookRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -1207,7 +1207,7 @@ Create `core/designsystem/build.gradle.kts`:
 ```kotlin
 plugins { id("buddhawajana.android.compose") }
 android {
-    namespace = "com.watna.buddhawajana.core.designsystem"
+    namespace = "com.watnapp.buddhawajana.core.designsystem"
 }
 dependencies {
     implementation(libs.compose.material.icons.extended)
@@ -1233,7 +1233,7 @@ Download Noto Sans Thai (OFL) regular + medium + bold and place at:
 Create `core/designsystem/src/main/java/com/watna/buddhawajana/core/designsystem/theme/Color.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.designsystem.theme
+package com.watnapp.buddhawajana.core.designsystem.theme
 
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -1273,14 +1273,14 @@ val DarkColors = darkColorScheme(
 Create `Type.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.designsystem.theme
+package com.watnapp.buddhawajana.core.designsystem.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.watna.buddhawajana.core.designsystem.R
+import com.watnapp.buddhawajana.core.designsystem.R
 
 val NotoSansThai = FontFamily(
     Font(R.font.noto_sans_thai_regular, FontWeight.Normal),
@@ -1306,7 +1306,7 @@ val BuddhawajanaTypography = Typography().run {
 Create `Shape.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.designsystem.theme
+package com.watnapp.buddhawajana.core.designsystem.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes
@@ -1322,7 +1322,7 @@ val BuddhawajanaShapes = Shapes(
 Create `Spacing.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.designsystem.theme
+package com.watnapp.buddhawajana.core.designsystem.theme
 
 import androidx.compose.ui.unit.dp
 
@@ -1340,7 +1340,7 @@ object Spacing {
 Create `Theme.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.designsystem.theme
+package com.watnapp.buddhawajana.core.designsystem.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -1377,7 +1377,7 @@ fun BuddhawajanaTheme(
 Create `core/designsystem/src/main/java/com/watna/buddhawajana/core/designsystem/component/StateViews.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.designsystem.component
+package com.watnapp.buddhawajana.core.designsystem.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -1389,7 +1389,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.watna.buddhawajana.core.designsystem.theme.Spacing
+import com.watnapp.buddhawajana.core.designsystem.theme.Spacing
 
 @Composable
 fun LoadingView(modifier: Modifier = Modifier) {
@@ -1417,7 +1417,7 @@ fun ErrorView(message: String, onRetry: () -> Unit, modifier: Modifier = Modifie
 Create `BuddhawajanaTopBar.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.designsystem.component
+package com.watnapp.buddhawajana.core.designsystem.component
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -1445,7 +1445,7 @@ fun BuddhawajanaTopBar(title: String, onSettingsClick: () -> Unit) {
 Create `CachedAsyncImage.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.designsystem.component
+package com.watnapp.buddhawajana.core.designsystem.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -1491,7 +1491,7 @@ plugins {
     id("buddhawajana.android.compose")
     alias(libs.plugins.kotlin.serialization)
 }
-android { namespace = "com.watna.buddhawajana.core.ui" }
+android { namespace = "com.watnapp.buddhawajana.core.ui" }
 dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:model"))
@@ -1515,7 +1515,7 @@ Create `core/ui/src/main/AndroidManifest.xml`:
 Create `core/ui/src/main/java/com/watna/buddhawajana/core/ui/state/UiState.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.ui.state
+package com.watnapp.buddhawajana.core.ui.state
 
 sealed interface UiState<out T> {
     data object Loading : UiState<Nothing>
@@ -1530,7 +1530,7 @@ sealed interface UiState<out T> {
 Create `core/ui/src/test/java/com/watna/buddhawajana/core/ui/state/UiStateExtTest.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.ui.state
+package com.watnapp.buddhawajana.core.ui.state
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -1561,7 +1561,7 @@ Expected: FAIL — `toListUiState` unresolved.
 Create `core/ui/src/main/java/com/watna/buddhawajana/core/ui/state/UiStateExt.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.ui.state
+package com.watnapp.buddhawajana.core.ui.state
 
 fun <T> List<T>.toListUiState(): UiState<List<T>> =
     if (isEmpty()) UiState.Empty else UiState.Content(this)
@@ -1577,7 +1577,7 @@ Expected: PASS.
 Create `BaseViewModel.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.ui
+package com.watnapp.buddhawajana.core.ui
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.channels.Channel
@@ -1596,7 +1596,7 @@ abstract class BaseViewModel : ViewModel() {
 Create `TopDestination.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.ui.nav
+package com.watnapp.buddhawajana.core.ui.nav
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Headphones
@@ -1614,7 +1614,7 @@ enum class TopDestination(val label: String, val icon: ImageVector) {
 Create `Routes.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.ui.nav
+package com.watnapp.buddhawajana.core.ui.nav
 
 import kotlinx.serialization.Serializable
 
@@ -1629,7 +1629,7 @@ import kotlinx.serialization.Serializable
 Create `BuddhawajanaNavSuite.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.core.ui.nav
+package com.watnapp.buddhawajana.core.ui.nav
 
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.Icon
@@ -1693,10 +1693,10 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 android {
-    namespace = "com.watna.buddhawajana"
+    namespace = "com.watnapp.buddhawajana"
     compileSdk = 36
     defaultConfig {
-        applicationId = "com.watna.buddhawajana"
+        applicationId = "com.watnapp.buddhawajana"
         minSdk = 24
         targetSdk = 36
         versionCode = 14004
@@ -1754,11 +1754,11 @@ dependencies {
 Create `app/src/main/java/com/watna/buddhawajana/BuddhawajanaApp.kt`:
 
 ```kotlin
-package com.watna.buddhawajana
+package com.watnapp.buddhawajana
 
 import android.app.Application
-import com.watna.buddhawajana.core.data.dataModule
-import com.watna.buddhawajana.core.network.networkModule
+import com.watnapp.buddhawajana.core.data.dataModule
+import com.watnapp.buddhawajana.core.network.networkModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -1782,7 +1782,7 @@ Modify `app/src/main/AndroidManifest.xml` — set `android:name=".BuddhawajanaAp
 Create `app/src/main/java/com/watna/buddhawajana/navigation/BuddhawajanaNavHost.kt`:
 
 ```kotlin
-package com.watna.buddhawajana.navigation
+package com.watnapp.buddhawajana.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -1793,9 +1793,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.watna.buddhawajana.core.designsystem.component.BuddhawajanaTopBar
-import com.watna.buddhawajana.core.ui.nav.BuddhawajanaNavSuite
-import com.watna.buddhawajana.core.ui.nav.TopDestination
+import com.watnapp.buddhawajana.core.designsystem.component.BuddhawajanaTopBar
+import com.watnapp.buddhawajana.core.ui.nav.BuddhawajanaNavSuite
+import com.watnapp.buddhawajana.core.ui.nav.TopDestination
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -1821,14 +1821,14 @@ fun BuddhawajanaNavHost() {
 Modify `MainActivity.kt` to:
 
 ```kotlin
-package com.watna.buddhawajana
+package com.watnapp.buddhawajana
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.watna.buddhawajana.core.designsystem.theme.BuddhawajanaTheme
-import com.watna.buddhawajana.navigation.BuddhawajanaNavHost
+import com.watnapp.buddhawajana.core.designsystem.theme.BuddhawajanaTheme
+import com.watnapp.buddhawajana.navigation.BuddhawajanaNavHost
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
