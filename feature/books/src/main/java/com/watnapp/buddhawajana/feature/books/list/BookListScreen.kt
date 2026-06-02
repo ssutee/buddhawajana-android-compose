@@ -47,7 +47,7 @@ fun BookListScreen(
             is UiState.Empty -> EmptyStateView("ไม่พบหนังสือ")
             is UiState.Error -> ErrorView(state.message, onRefresh)
             is UiState.Content -> LazyVerticalGrid(
-                columns = GridCells.Adaptive(120.dp),
+                columns = GridCells.Fixed(3),
                 contentPadding = PaddingValues(Spacing.m),
                 horizontalArrangement = Arrangement.spacedBy(Spacing.m),
                 verticalArrangement = Arrangement.spacedBy(Spacing.m),
