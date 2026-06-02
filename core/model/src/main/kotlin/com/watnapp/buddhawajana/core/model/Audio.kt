@@ -5,4 +5,6 @@ data class Audio(
     val albumId: String,
     val title: String,
     val url: String,
+    val durationMs: Long? = null,
+    val sizeBytes: Long? = null,
 )
