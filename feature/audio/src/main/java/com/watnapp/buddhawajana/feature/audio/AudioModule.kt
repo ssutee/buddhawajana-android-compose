@@ -1,6 +1,7 @@
 package com.watnapp.buddhawajana.feature.audio
 
 import com.watnapp.buddhawajana.feature.audio.albums.AlbumsViewModel
+import com.watnapp.buddhawajana.feature.audio.downloads.DownloadsViewModel
 import com.watnapp.buddhawajana.feature.audio.favorites.FavoritesViewModel
 import com.watnapp.buddhawajana.feature.audio.list.AudioListViewModel
 import com.watnapp.buddhawajana.feature.audio.player.PlayerViewModel
@@ -12,4 +13,5 @@ val audioModule = module {
     viewModel { (albumId: String) -> AudioListViewModel(albumId, get(), get(), get()) }
     viewModel { PlayerViewModel(get(), get(), get()) }
     viewModel { FavoritesViewModel(get(), get()) }
+    viewModel { DownloadsViewModel(get(), get()) }
 }

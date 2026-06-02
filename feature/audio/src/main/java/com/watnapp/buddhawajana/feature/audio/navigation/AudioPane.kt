@@ -13,6 +13,8 @@ import com.watnapp.buddhawajana.core.model.Audio
 import com.watnapp.buddhawajana.core.ui.state.UiState
 import com.watnapp.buddhawajana.feature.audio.albums.AlbumsScreen
 import com.watnapp.buddhawajana.feature.audio.albums.AlbumsViewModel
+import com.watnapp.buddhawajana.feature.audio.downloads.DownloadsScreen
+import com.watnapp.buddhawajana.feature.audio.downloads.DownloadsViewModel
 import com.watnapp.buddhawajana.feature.audio.favorites.FavoritesScreen
 import com.watnapp.buddhawajana.feature.audio.favorites.FavoritesViewModel
 import com.watnapp.buddhawajana.feature.audio.list.AudioListScreen
@@ -24,6 +26,7 @@ import org.koin.core.parameter.parametersOf
 @Serializable private data object AlbumsRoute
 @Serializable private data class AudioListRoute(val albumId: String, val albumTitle: String, val albumCoverUrl: String?)
 @Serializable private data object FavoritesRoute
+@Serializable private data object DownloadsRoute
 
 /**
  * Browse pane for the AUDIO tab. Hosts albums → audio-list internally so the bottom
@@ -87,6 +90,15 @@ fun AudioPane(onOpenPlayer: () -> Unit, modifier: Modifier = Modifier) {
                 state = state,
                 onPlay = { f -> vm.play(f); onOpenPlayer() },
                 onRemove = vm::remove,
+            )
+        }
+        composable<DownloadsRoute> {
+            val vm: DownloadsViewModel = koinViewModel()
+            val state by vm.state.collectAsState()
+            DownloadsScreen(
+                state = state,
+                onPlay = { d -> vm.play(d); onOpenPlayer() },
+                onRemove = vm::delete,
             )
         }
     }
