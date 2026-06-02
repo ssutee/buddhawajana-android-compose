@@ -4,6 +4,7 @@ import com.watnapp.buddhawajana.core.data.db.AlbumEntity
 import com.watnapp.buddhawajana.core.data.db.AudioEntity
 import com.watnapp.buddhawajana.core.data.db.BookEntity
 import com.watnapp.buddhawajana.core.data.db.BookmarkEntity
+import com.watnapp.buddhawajana.core.data.db.FavoriteEntity
 import com.watnapp.buddhawajana.core.data.db.PlaybackProgressEntity
 import com.watnapp.buddhawajana.core.data.db.ReadingProgressEntity
 import com.watnapp.buddhawajana.core.common.toHttpsOrSelf
@@ -11,6 +12,7 @@ import com.watnapp.buddhawajana.core.model.Album
 import com.watnapp.buddhawajana.core.model.Audio
 import com.watnapp.buddhawajana.core.model.Book
 import com.watnapp.buddhawajana.core.model.Bookmark
+import com.watnapp.buddhawajana.core.model.Favorite
 import com.watnapp.buddhawajana.core.model.PlaybackProgress
 import com.watnapp.buddhawajana.core.model.ReadingProgress
 import com.watnapp.buddhawajana.core.network.dto.AlbumDto
@@ -101,3 +103,8 @@ fun ReadingProgressEntity.toModel() = ReadingProgress(bookId, page, updatedAt)
 // ---- PlaybackProgress ----
 
 fun PlaybackProgressEntity.toModel() = PlaybackProgress(audioId, positionMs, updatedAt)
+
+// ---- Favorite ----
+
+fun FavoriteEntity.toModel() = Favorite(audioId, title, url, albumId, albumTitle, coverUrl, addedAt)
+fun Favorite.toEntity() = FavoriteEntity(audioId, title, url, albumId, albumTitle, coverUrl, addedAt)
