@@ -9,11 +9,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Forward30
+import androidx.compose.material.icons.filled.FastForward
+import androidx.compose.material.icons.filled.FastRewind
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Replay30
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material3.DropdownMenu
@@ -71,7 +71,7 @@ fun PlayerScreen(vm: PlayerViewModel, onBack: () -> Unit, modifier: Modifier = M
                 value = shown,
                 valueRange = 0f..(duration.toFloat().coerceAtLeast(1f)),
                 onValueChange = { dragging = true; draft = it },
-                onValueChangeFinished = { vm.seekTo(draft.toLong()); dragging = false },
+                onValueChangeFinished = { if (dragging) { vm.seekTo(draft.toLong()); dragging = false } },
             )
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(formatTime(shown.toLong()))
@@ -81,11 +81,11 @@ fun PlayerScreen(vm: PlayerViewModel, onBack: () -> Unit, modifier: Modifier = M
 
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             IconButton(onClick = vm::prev) { Icon(Icons.Default.SkipPrevious, "ก่อนหน้า") }
-            IconButton(onClick = vm::skipBack) { Icon(Icons.Default.Replay30, "ถอย 15 วิ") }
+            IconButton(onClick = vm::skipBack) { Icon(Icons.Default.FastRewind, "ถอย 15 วิ") }
             IconButton(onClick = vm::playPause) {
                 Icon(if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow, "เล่น/หยุด")
             }
-            IconButton(onClick = vm::skipForward) { Icon(Icons.Default.Forward30, "เดิน 15 วิ") }
+            IconButton(onClick = vm::skipForward) { Icon(Icons.Default.FastForward, "เดิน 15 วิ") }
             IconButton(onClick = vm::next) { Icon(Icons.Default.SkipNext, "ถัดไป") }
         }
 
@@ -101,10 +101,10 @@ private fun SpeedAndSleepRow(vm: PlayerViewModel) {
     var sleepOpen by remember { mutableStateOf(false) }
     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
         Box {
-            TextButton(onClick = { speedOpen = true }) { Text("${speed}x") }
+            TextButton(onClick = { speedOpen = true }) { Text(speedLabel(speed)) }
             DropdownMenu(expanded = speedOpen, onDismissRequest = { speedOpen = false }) {
                 PlaybackSpeed.PRESETS.forEach { r ->
-                    DropdownMenuItem(text = { Text("${r}x") }, onClick = { vm.setSpeed(r); speedOpen = false })
+                    DropdownMenuItem(text = { Text(speedLabel(r)) }, onClick = { vm.setSpeed(r); speedOpen = false })
                 }
             }
         }
@@ -128,3 +128,6 @@ private fun SpeedAndSleepRow(vm: PlayerViewModel) {
         }
     }
 }
+
+private fun speedLabel(rate: Float): String =
+    if (rate % 1f == 0f) "${rate.toInt()}x" else "${rate}x"
