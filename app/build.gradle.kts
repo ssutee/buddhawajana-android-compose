@@ -68,12 +68,15 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:common"))
     implementation(project(":feature:books"))
+    implementation(project(":core:player"))
+    implementation(project(":feature:audio"))
     implementation(libs.kotlinx.serialization.json)
 
     // ── Compose BOM + UI ──────────────────────────────────────────────────
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.material3)
+    implementation(libs.compose.material.icons.extended)
     implementation(libs.compose.ui.tooling.preview)
     debugImplementation(libs.compose.ui.tooling)
 

@@ -18,13 +18,17 @@ import org.koin.core.parameter.parametersOf
 
 @Serializable private data object HomeRoute
 @Serializable private data class ReaderRoute(val bookId: Long)
+@Serializable private data object PlayerRoute
 
 @Composable
 fun BuddhawajanaNavHost() {
     val nav = rememberNavController()
     NavHost(nav, startDestination = HomeRoute) {
         composable<HomeRoute> {
-            HomeScaffold(onOpenBook = { id -> nav.navigate(ReaderRoute(id)) })
+            HomeScaffold(
+                onOpenBook = { id -> nav.navigate(ReaderRoute(id)) },
+                onOpenPlayer = { nav.navigate(PlayerRoute) },
+            )
         }
         composable<ReaderRoute> { entry ->
             val bookId = entry.toRoute<ReaderRoute>().bookId
@@ -50,6 +54,13 @@ fun BuddhawajanaNavHost() {
                         context.startActivity(Intent.createChooser(intent, null))
                     }
                 },
+            )
+        }
+        composable<PlayerRoute> {
+            val playerVm: com.watnapp.buddhawajana.feature.audio.player.PlayerViewModel = koinViewModel()
+            com.watnapp.buddhawajana.feature.audio.player.PlayerScreen(
+                vm = playerVm,
+                onBack = { nav.popBackStack() },
             )
         }
     }

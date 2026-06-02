@@ -3,6 +3,8 @@ package com.watnapp.buddhawajana
 import android.app.Application
 import com.watnapp.buddhawajana.core.data.dataModule
 import com.watnapp.buddhawajana.core.network.networkModule
+import com.watnapp.buddhawajana.core.player.playerModule
+import com.watnapp.buddhawajana.feature.audio.audioModule
 import com.watnapp.buddhawajana.feature.books.booksModule
 import com.watnapp.buddhawajana.repository.AlbumRepository
 import com.watnapp.buddhawajana.repository.AudioRepository
@@ -29,7 +31,7 @@ class MainApplication : Application() {
             //   duplicate-type conflict.
             // booksModule: provides BookListViewModel and ReaderViewModel for :feature:books.
             // appModule: legacy Audio/YouTube DI (kept until Task 11 migration).
-            modules(networkModule, dataModule, booksModule, appModule)
+            modules(networkModule, dataModule, playerModule, audioModule, booksModule, appModule)
         }
     }
 }
