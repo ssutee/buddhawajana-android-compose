@@ -4,7 +4,9 @@ import androidx.room.Room
 import com.watnapp.buddhawajana.core.data.db.AppDatabase
 import com.watnapp.buddhawajana.core.data.repo.AlbumRepository
 import com.watnapp.buddhawajana.core.data.repo.AudioRepository
+import com.watnapp.buddhawajana.core.data.repo.BookmarkRepository
 import com.watnapp.buddhawajana.core.data.repo.BookRepository
+import com.watnapp.buddhawajana.core.data.repo.ReadingProgressRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -21,4 +23,6 @@ val dataModule = module {
     single { BookRepository(get(), get()) }
     single { AlbumRepository(get(), get()) }
     single { AudioRepository(get(), get()) }
+    single { BookmarkRepository(get()) }
+    single { ReadingProgressRepository(get()) }
 }

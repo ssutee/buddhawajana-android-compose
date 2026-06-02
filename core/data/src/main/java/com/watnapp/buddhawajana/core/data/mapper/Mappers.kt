@@ -3,9 +3,13 @@ package com.watnapp.buddhawajana.core.data.mapper
 import com.watnapp.buddhawajana.core.data.db.AlbumEntity
 import com.watnapp.buddhawajana.core.data.db.AudioEntity
 import com.watnapp.buddhawajana.core.data.db.BookEntity
+import com.watnapp.buddhawajana.core.data.db.BookmarkEntity
+import com.watnapp.buddhawajana.core.data.db.ReadingProgressEntity
 import com.watnapp.buddhawajana.core.model.Album
 import com.watnapp.buddhawajana.core.model.Audio
 import com.watnapp.buddhawajana.core.model.Book
+import com.watnapp.buddhawajana.core.model.Bookmark
+import com.watnapp.buddhawajana.core.model.ReadingProgress
 import com.watnapp.buddhawajana.core.network.dto.AlbumDto
 import com.watnapp.buddhawajana.core.network.dto.AudioDto
 import com.watnapp.buddhawajana.core.network.dto.BookDto
@@ -80,3 +84,11 @@ fun AudioEntity.toModel(): Audio = Audio(
     title = title,
     url = url,
 )
+
+// ---- Bookmark ----
+
+fun BookmarkEntity.toModel() = Bookmark(id, bookId, page, note, addedAt)
+
+// ---- ReadingProgress ----
+
+fun ReadingProgressEntity.toModel() = ReadingProgress(bookId, page, updatedAt)
