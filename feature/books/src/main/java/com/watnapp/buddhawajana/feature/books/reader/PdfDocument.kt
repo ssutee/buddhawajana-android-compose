@@ -7,17 +7,23 @@ import android.os.ParcelFileDescriptor
 import androidx.collection.LruCache
 import java.io.File
 
+interface PdfHandle {
+    val pageCount: Int
+    fun renderPage(index: Int, targetWidthPx: Int): Bitmap
+    fun close()
+}
+
 class PdfDocument private constructor(
     private val pfd: ParcelFileDescriptor,
     private val renderer: PdfRenderer,
-) {
-    val pageCount: Int get() = renderer.pageCount
+) : PdfHandle {
+    override val pageCount: Int get() = renderer.pageCount
     // Do NOT recycle evicted bitmaps: Compose may still hold an ImageBitmap referencing
     // a page that fell out of the cache during fast seeking. Let GC reclaim them.
     private val cache = LruCache<Int, Bitmap>(6)
 
     @Synchronized
-    fun renderPage(index: Int, targetWidthPx: Int): Bitmap {
+    override fun renderPage(index: Int, targetWidthPx: Int): Bitmap {
         cache.get(index)?.let { return it }
         renderer.openPage(index).use { page ->
             val scale = targetWidthPx.toFloat() / page.width
@@ -32,7 +38,7 @@ class PdfDocument private constructor(
     }
 
     @Synchronized
-    fun close() {
+    override fun close() {
         cache.evictAll()
         renderer.close()
         pfd.close()
