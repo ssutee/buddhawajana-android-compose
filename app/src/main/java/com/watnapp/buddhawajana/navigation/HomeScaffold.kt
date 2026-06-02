@@ -23,12 +23,15 @@ import org.koin.compose.koinInject
 fun HomeScaffold(onOpenBook: (Long) -> Unit, onOpenPlayer: () -> Unit) {
     var selected by rememberSaveable { mutableStateOf(TopDestination.AUDIO) }
     val controller: PlaybackController = koinInject()
-    Scaffold(
-        topBar = {
-            BuddhawajanaTopBar(title = "พุทธวจน", onSettingsClick = { })
-        }
-    ) { innerPadding ->
-        BuddhawajanaNavSuite(selected = selected, onSelect = { selected = it }) {
+    // Nav suite is the OUTER container so the tablet rail spans the full height; the top
+    // bar lives inside the content pane. Nesting it the other way let the top app bar
+    // overlap the rail's first item (Audio) on wide screens.
+    BuddhawajanaNavSuite(selected = selected, onSelect = { selected = it }) {
+        Scaffold(
+            topBar = {
+                BuddhawajanaTopBar(title = "พุทธวจน", onSettingsClick = { })
+            }
+        ) { innerPadding ->
             Column(modifier = Modifier.padding(innerPadding)) {
                 Box(modifier = Modifier.weight(1f)) {
                     when (selected) {
