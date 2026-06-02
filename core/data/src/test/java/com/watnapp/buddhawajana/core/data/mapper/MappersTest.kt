@@ -7,7 +7,7 @@ import org.junit.Test
 class MappersTest {
     @Test
     fun `BookDto maps to entity then model preserving fields`() {
-        val dto = BookDto(id = "7", name = "ตถาคต", sortOrder = 2, totalpage = 50, producer = "P", file = "b.pdf", cover = "c.png", category = null)
+        val dto = BookDto(id = "7", name = "ตถาคต", sortOrder = "2", totalpage = "50", producer = "P", file = "b.pdf", cover = "c.png", category = null)
         val model = dto.toEntity().toModel()
         assertEquals("7", model.id)
         assertEquals("ตถาคต", model.title)
@@ -18,7 +18,7 @@ class MappersTest {
 
     @Test
     fun `BookDto category maps through entity to model`() {
-        val dto = BookDto(id = "7", name = "ตถาคต", sortOrder = 2, totalpage = 50, producer = "P", file = "b.pdf", cover = "c.png", category = "พุทธวจน")
+        val dto = BookDto(id = "7", name = "ตถาคต", sortOrder = "2", totalpage = "50", producer = "P", file = "b.pdf", cover = "c.png", category = "พุทธวจน")
         val model = dto.toEntity().toModel()
         assertEquals("พุทธวจน", model.category)
     }

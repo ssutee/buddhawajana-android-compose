@@ -28,8 +28,8 @@ fun BookDto.toEntity(): BookEntity = BookEntity(
     title = name ?: "",
     coverUrl = cover ?: "",
     bookUrl = file ?: "",
-    position = sortOrder ?: 0,
-    pages = totalpage ?: 0,
+    position = sortOrder?.toIntOrNull() ?: 0,
+    pages = totalpage?.toIntOrNull() ?: 0,
     producer = producer ?: "",
     category = category ?: "",
     // remaining columns keep entity defaults

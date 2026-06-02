@@ -5,8 +5,10 @@ import com.squareup.moshi.Json
 data class BookDto(
     val id: String,
     val name: String?,
-    @Json(name = "sort_order") val sortOrder: Int?,
-    val totalpage: Int?,
+    // String to match the API's wire contract (legacy ebookshop emits these as
+    // JSON strings; iOS decodes them as String too). Parsed to Int in Mappers.
+    @Json(name = "sort_order") val sortOrder: String?,
+    val totalpage: String?,
     val producer: String?,
     val file: String?,
     val cover: String?,

@@ -53,7 +53,7 @@ class BookRepositoryTest {
         val dao = FakeBookDao()
         val service = mockk<BookService>()
         coEvery { service.getBooks() } returns listOf(
-            BookDto(id = "1", name = "The Way", sortOrder = 1, totalpage = 100, producer = "P", file = "f.pdf", cover = "c.png", category = null)
+            BookDto(id = "1", name = "The Way", sortOrder = "1", totalpage = "100", producer = "P", file = "f.pdf", cover = "c.png", category = null)
         )
 
         val repo = BookRepository(dao, service)
@@ -108,7 +108,7 @@ class BookRepositoryTest {
 
         val service = mockk<BookService>()
         coEvery { service.getBooks() } returns listOf(
-            BookDto(id = "1", name = "New Title", sortOrder = 1, totalpage = 200, producer = "P", file = "new.pdf", cover = "new_cover.png", category = null)
+            BookDto(id = "1", name = "New Title", sortOrder = "1", totalpage = "200", producer = "P", file = "new.pdf", cover = "new_cover.png", category = null)
         )
 
         val repo = BookRepository(dao, service)
@@ -133,7 +133,7 @@ class BookRepositoryTest {
         // DB is empty
         val service = mockk<BookService>()
         coEvery { service.getBooks() } returns listOf(
-            BookDto(id = "42", name = "New Book", sortOrder = 5, totalpage = 50, producer = "P", file = "b.pdf", cover = "c.png", category = null)
+            BookDto(id = "42", name = "New Book", sortOrder = "5", totalpage = "50", producer = "P", file = "b.pdf", cover = "c.png", category = null)
         )
 
         val repo = BookRepository(dao, service)
@@ -157,7 +157,7 @@ class BookRepositoryTest {
         )
         val service = mockk<BookService>()
         coEvery { service.getBooks() } returns listOf(
-            BookDto(id = "1", name = "Keep", sortOrder = 1, totalpage = 1, producer = "P", file = "f", cover = "c", category = null)
+            BookDto(id = "1", name = "Keep", sortOrder = "1", totalpage = "1", producer = "P", file = "f", cover = "c", category = null)
         )
         BookRepository(dao, service).refresh()
         assertEquals(listOf(1L), dao.getAllOnce().map { it.bookId })
