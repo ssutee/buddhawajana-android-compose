@@ -17,6 +17,10 @@ interface BookDao {
     @Insert(onConflict = REPLACE)
     suspend fun upsertAll(items: List<BookEntity>)
 
+    /** Reconcile: drop cached books the server no longer lists. */
+    @Query("DELETE FROM book WHERE book_id NOT IN (:ids)")
+    suspend fun deleteNotIn(ids: List<Long>)
+
     @Query("SELECT COUNT(*) FROM book")
     suspend fun count(): Int
 }

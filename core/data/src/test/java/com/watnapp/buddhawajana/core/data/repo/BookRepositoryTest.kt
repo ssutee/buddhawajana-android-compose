@@ -34,6 +34,10 @@ private class FakeBookDao : BookDao {
         _state.value = current.values.toList()
     }
 
+    override suspend fun deleteNotIn(ids: List<Long>) {
+        _state.value = _state.value.filter { it.bookId in ids }
+    }
+
     override suspend fun count(): Int = _state.value.size
 
     fun seed(vararg entities: BookEntity) {
@@ -141,5 +145,34 @@ class BookRepositoryTest {
         assertEquals(0, entities[0].status)
         assertEquals(0, entities[0].progress)
         assertEquals("", entities[0].requestId)
+    }
+
+    // (e) reconcile: a book absent from a non-empty server response is removed
+    @Test
+    fun `refresh removes books the server no longer returns`() = runTest {
+        val dao = FakeBookDao()
+        dao.seed(
+            BookEntity(bookId = 1L, title = "Keep", coverUrl = "", bookUrl = "", position = 1, status = 0, progress = 0, requestId = "", new = false, updated = false),
+            BookEntity(bookId = 2L, title = "Stale", coverUrl = "", bookUrl = "", position = 2, status = 0, progress = 0, requestId = "", new = false, updated = false),
+        )
+        val service = mockk<BookService>()
+        coEvery { service.getBooks() } returns listOf(
+            BookDto(id = "1", name = "Keep", sortOrder = 1, totalpage = 1, producer = "P", file = "f", cover = "c", category = null)
+        )
+        BookRepository(dao, service).refresh()
+        assertEquals(listOf(1L), dao.getAllOnce().map { it.bookId })
+    }
+
+    // (f) reconcile guard: an empty server response never wipes the cache
+    @Test
+    fun `refresh keeps cache when server returns empty`() = runTest {
+        val dao = FakeBookDao()
+        dao.seed(
+            BookEntity(bookId = 1L, title = "Keep", coverUrl = "", bookUrl = "", position = 1, status = 0, progress = 0, requestId = "", new = false, updated = false)
+        )
+        val service = mockk<BookService>()
+        coEvery { service.getBooks() } returns emptyList()
+        BookRepository(dao, service).refresh()
+        assertEquals(1, dao.getAllOnce().size)
     }
 }

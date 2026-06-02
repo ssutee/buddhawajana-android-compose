@@ -27,6 +27,9 @@ class AudioRepositoryMetadataTest {
         override suspend fun updateMetadata(audioId: Long, durationMs: Long?, sizeBytes: Long?) {
             stored.replaceAll { if (it.audioId == audioId) it.copy(durationMs = durationMs, sizeBytes = sizeBytes) else it }
         }
+        override suspend fun deleteNotInAlbum(albumId: Long, ids: List<Long>) {
+            stored.removeAll { it.albumId == albumId && it.audioId !in ids }
+        }
     }
     private val service = object : AudioService {
         override suspend fun getAlbums(): List<AlbumDto> = emptyList()
@@ -67,5 +70,12 @@ class AudioRepositoryMetadataTest {
         repo.ensureMetadata(Audio("3", "9", "T", "http://x/3.mp3"))
         val row = dao.getAllOnce(9).single { it.audioId == 3L }
         assertNull(row.durationMs)
+    }
+
+    @Test fun `refresh removes audios the server no longer returns`() = runTest {
+        stored.add(AudioEntity(audioId = 1, albumId = 9, title = "keep", url = "u1"))
+        stored.add(AudioEntity(audioId = 99, albumId = 9, title = "stale", url = "u99"))
+        AudioRepository(dao, service).refresh("9") // service returns only id=1
+        assertEquals(listOf(1L), dao.getAllOnce(9).map { it.audioId })
     }
 }

@@ -13,7 +13,9 @@ import kotlinx.coroutines.flow.map
  * Cache-first repository for albums.
  *
  * Albums have no user-owned mutable state (no download columns), so a plain
- * replace upsert is safe.
+ * replace upsert is safe. A non-empty server response also reconciles deletions:
+ * albums no longer listed are removed (and their audios cascade). An empty
+ * response is a no-op to avoid wiping the cache on a blank fetch.
  */
 class AlbumRepository(
     private val dao: AlbumDao,
@@ -28,5 +30,6 @@ class AlbumRepository(
         val dtos = service.getAlbums()
         val entities = dtos.map { it.toEntity() }
         dao.upsertAll(entities)
+        if (dtos.isNotEmpty()) dao.deleteNotIn(dtos.map { it.id.toLong() })
     }
 }

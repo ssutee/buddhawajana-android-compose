@@ -14,6 +14,10 @@ interface AlbumDao {
     @Insert(onConflict = REPLACE)
     suspend fun upsertAll(items: List<AlbumEntity>)
 
+    /** Reconcile: drop cached albums the server no longer lists. Cascades to their audios. */
+    @Query("DELETE FROM album WHERE album_id NOT IN (:ids)")
+    suspend fun deleteNotIn(ids: List<Long>)
+
     @Query("SELECT COUNT(*) FROM album")
     suspend fun count(): Int
 }

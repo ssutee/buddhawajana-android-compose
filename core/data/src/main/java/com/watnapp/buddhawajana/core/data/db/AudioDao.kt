@@ -22,4 +22,8 @@ interface AudioDao {
 
     @Query("UPDATE audio SET duration_ms = :durationMs, size_bytes = :sizeBytes WHERE audio_id = :audioId")
     suspend fun updateMetadata(audioId: Long, durationMs: Long?, sizeBytes: Long?)
+
+    /** Reconcile: drop cached audios in [albumId] the server no longer lists. */
+    @Query("DELETE FROM audio WHERE album_id = :albumId AND audio_id NOT IN (:ids)")
+    suspend fun deleteNotInAlbum(albumId: Long, ids: List<Long>)
 }

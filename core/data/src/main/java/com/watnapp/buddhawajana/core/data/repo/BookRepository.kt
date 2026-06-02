@@ -20,9 +20,9 @@ import kotlinx.coroutines.flow.map
  *     The is_new / is_updated flags follow the original app's behaviour:
  *     a book that already exists in the DB is NOT marked as new.
  *   - If not found: insert a fresh entity (download columns default to 0/"").
- * - Books present in the DB but absent from the server response are kept
- *   (skipDeleting = true equivalent – the original used skipDeleting() = false,
- *    but we keep the simpler safe-default here to avoid deleting books mid-download).
+ * - Reconcile: books in the DB but absent from a NON-EMPTY server response are
+ *   deleted (server-side deletions propagate to the client). An empty response is
+ *   treated as a no-op (never wipe the cache on a blank/failed-but-200 fetch).
  *
  * NOTE: The original app's update() called convertJsonToEntity() which DID wipe
  * download columns — that was a latent bug. We intentionally fix it here.
@@ -58,5 +58,6 @@ class BookRepository(
             }
         }
         dao.upsertAll(merged)
+        if (dtos.isNotEmpty()) dao.deleteNotIn(dtos.map { it.id.toLong() })
     }
 }

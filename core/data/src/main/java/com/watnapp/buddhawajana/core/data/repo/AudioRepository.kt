@@ -42,6 +42,7 @@ class AudioRepository(
             } else fresh
         }
         dao.upsertAll(merged)
+        if (dtos.isNotEmpty()) dao.deleteNotInAlbum(albumIdLong, dtos.map { it.id.toLong() })
     }
 
     /** Probe + persist duration/size for [audio] if not already known. No-op if probed or no prober. */
