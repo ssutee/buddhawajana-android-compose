@@ -15,7 +15,4 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.koin.android)
     implementation(libs.okhttp)
-    testImplementation(libs.junit)
-    testImplementation(libs.turbine)
-    testImplementation(libs.kotlinx.coroutines.test)
 }
