@@ -63,4 +63,18 @@ class AudioListViewModelTest {
         advanceUntilIdle()
         coVerify { repo.ensureMetadata(audio) }
     }
+
+    @Test fun `onRowVisible dedups repeated probes for same audio`() = runTest {
+        val audio = Audio("1", "9", "ตอนหนึ่ง", "http://x/1.mp3", durationMs = null, sizeBytes = null)
+        val repo: AudioRepository = mockk(relaxed = true) {
+            every { stream("9") } returns flowOf(listOf(audio))
+            coEvery { refresh("9") } returns Result.success(Unit)
+            coEvery { ensureMetadata(any()) } returns Unit
+        }
+        val vm = AudioListViewModel("9", repo, controller())
+        vm.onRowVisible(audio)
+        vm.onRowVisible(audio)
+        advanceUntilIdle()
+        coVerify(exactly = 1) { repo.ensureMetadata(audio) }
+    }
 }

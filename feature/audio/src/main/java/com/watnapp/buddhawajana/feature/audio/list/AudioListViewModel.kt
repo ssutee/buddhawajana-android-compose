@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 class AudioListViewModel(
     private val albumId: String,
     private val repo: AudioRepository,
-    val controller: PlaybackController,
+    private val controller: PlaybackController,
 ) : BaseViewModel() {
 
     private val query = MutableStateFlow("")
