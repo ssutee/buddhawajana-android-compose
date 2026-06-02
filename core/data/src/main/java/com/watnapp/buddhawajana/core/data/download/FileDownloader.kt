@@ -1,7 +1,9 @@
 package com.watnapp.buddhawajana.core.data.download
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.File
@@ -42,5 +44,5 @@ class FileDownloader(
         } catch (e: Throwable) {
             tmp.delete(); emit(DownloadProgress.Failed(e))
         }
-    }
+    }.flowOn(Dispatchers.IO) // blocking OkHttp execute()/read()/write() must not run on the collector (Main) thread
 }
