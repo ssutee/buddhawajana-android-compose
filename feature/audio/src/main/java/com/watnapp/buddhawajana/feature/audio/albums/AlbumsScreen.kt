@@ -49,7 +49,7 @@ fun AlbumsScreen(
             is UiState.Empty -> EmptyStateView("ไม่พบชุดเสียง")
             is UiState.Error -> ErrorView(state.message, onRefresh)
             is UiState.Content -> LazyVerticalGrid(
-                columns = GridCells.Adaptive(150.dp),
+                columns = GridCells.Adaptive(110.dp),
                 contentPadding = PaddingValues(Spacing.m),
                 horizontalArrangement = Arrangement.spacedBy(Spacing.m),
                 verticalArrangement = Arrangement.spacedBy(Spacing.m),
@@ -68,7 +68,9 @@ private fun AlbumCell(album: Album, onClick: () -> Unit) {
         Box(Modifier.fillMaxWidth().aspectRatio(1f).clip(RoundedCornerShape(12.dp))) {
             CachedAsyncImage(album.coverUrl, album.title, Modifier.fillMaxSize())
         }
-        Text(album.title, style = MaterialTheme.typography.titleSmall, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(top = Spacing.xs))
-        Text("${album.itemCount} ตอน", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 2.dp))
+        Text(album.title, style = MaterialTheme.typography.labelMedium, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(top = Spacing.xs))
+        if (album.itemCount > 0) {
+            Text("${album.itemCount} ตอน", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 2.dp))
+        }
     }
 }
