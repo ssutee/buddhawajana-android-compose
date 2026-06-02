@@ -101,6 +101,7 @@ fun PlayerScreen(vm: PlayerViewModel, onBack: () -> Unit, modifier: Modifier = M
 private fun ActionRow(vm: PlayerViewModel) {
     val isFavorite by vm.isFavorite.collectAsState()
     val now by vm.nowPlaying.collectAsState()
+    val downloadState by vm.downloadState.collectAsState()
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(24.dp),
@@ -111,7 +112,12 @@ private fun ActionRow(vm: PlayerViewModel) {
                 contentDescription = "รายการโปรด",
             )
         }
-        // Download button goes here (deferred to the Downloads vertical).
+        com.watnapp.buddhawajana.feature.audio.download.DownloadButton(
+            state = downloadState,
+            onDownload = vm::download,
+            onCancel = vm::cancelDownload,
+            onDelete = vm::deleteDownload,
+        )
     }
 }
 

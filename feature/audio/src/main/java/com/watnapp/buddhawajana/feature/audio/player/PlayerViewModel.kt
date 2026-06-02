@@ -1,7 +1,11 @@
 package com.watnapp.buddhawajana.feature.audio.player
 
 import androidx.lifecycle.viewModelScope
+import com.watnapp.buddhawajana.core.data.download.DownloadState
+import com.watnapp.buddhawajana.core.data.repo.DownloadRepository
 import com.watnapp.buddhawajana.core.data.repo.FavoriteRepository
+import com.watnapp.buddhawajana.core.model.Album
+import com.watnapp.buddhawajana.core.model.Audio
 import com.watnapp.buddhawajana.core.model.Favorite
 import com.watnapp.buddhawajana.core.player.NowPlaying
 import com.watnapp.buddhawajana.core.player.PlaybackController
@@ -19,6 +23,7 @@ import kotlinx.coroutines.launch
 class PlayerViewModel(
     private val controller: PlaybackController,
     private val favorites: FavoriteRepository,
+    private val downloads: DownloadRepository,
 ) : BaseViewModel() {
     val nowPlaying = controller.nowPlaying
     val isPlaying = controller.isPlaying
@@ -32,6 +37,25 @@ class PlayerViewModel(
         controller.nowPlaying.flatMapLatest { np ->
             if (np == null) flowOf(false) else favorites.isFavorite(np.audioId)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val downloadState: StateFlow<DownloadState> =
+        controller.nowPlaying.flatMapLatest { np ->
+            if (np == null) flowOf(DownloadState.NotDownloaded) else downloads.state(np.audioId)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), DownloadState.NotDownloaded)
+
+    fun download() {
+        val np = controller.nowPlaying.value ?: return
+        if (np.url.isEmpty()) return
+        downloads.enqueue(
+            Audio(np.audioId, np.albumId, np.title, np.url),
+            Album(np.albumId, np.album, np.artworkUrl, 0, 0),
+        )
+    }
+    fun cancelDownload() { controller.nowPlaying.value?.let { downloads.cancel(it.audioId) } }
+    fun deleteDownload() = viewModelScope.launch {
+        controller.nowPlaying.value?.let { downloads.delete(it.audioId) }
+    }
 
     fun playPause() = controller.playPause()
     fun seekTo(ms: Long) = controller.seekTo(ms)

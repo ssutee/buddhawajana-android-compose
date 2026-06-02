@@ -1,6 +1,10 @@
 package com.watnapp.buddhawajana.feature.audio.player
 
+import com.watnapp.buddhawajana.core.data.download.DownloadState
+import com.watnapp.buddhawajana.core.data.repo.DownloadRepository
 import com.watnapp.buddhawajana.core.data.repo.FavoriteRepository
+import com.watnapp.buddhawajana.core.model.Album
+import com.watnapp.buddhawajana.core.model.Audio
 import com.watnapp.buddhawajana.core.model.Favorite
 import com.watnapp.buddhawajana.core.player.NowPlaying
 import com.watnapp.buddhawajana.core.player.PlaybackController
@@ -9,6 +13,7 @@ import com.watnapp.buddhawajana.core.player.SleepTimerState
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +36,10 @@ class PlayerViewModelTest {
     private val favorites: FavoriteRepository = mockk(relaxed = true) {
         every { isFavorite(any()) } returns flowOf(false)
     }
+    private val downloads: DownloadRepository =
+        mockk(relaxed = true) {
+            every { state(any()) } returns flowOf(DownloadState.NotDownloaded)
+        }
     private fun controller(now: NowPlaying? = null): PlaybackController = mockk(relaxed = true) {
         every { nowPlaying } returns MutableStateFlow(now)
         every { isPlaying } returns MutableStateFlow(false)
@@ -42,30 +51,43 @@ class PlayerViewModelTest {
 
     @Test fun `skip forward and back use the 15s delta`() {
         val c = controller()
-        val vm = PlayerViewModel(c, favorites)
+        val vm = PlayerViewModel(c, favorites, downloads)
         vm.skipForward(); coVerify { c.skip(SKIP_DELTA_MS) }
         vm.skipBack(); coVerify { c.skip(-SKIP_DELTA_MS) }
     }
 
     @Test fun `playPause and seek forward to controller`() {
         val c = controller()
-        val vm = PlayerViewModel(c, favorites)
+        val vm = PlayerViewModel(c, favorites, downloads)
         vm.playPause(); coVerify { c.playPause() }
         vm.seekTo(1234L); coVerify { c.seekTo(1234L) }
     }
 
     @Test fun `toggleFavorite snapshots current track`() = runTest {
         val now = NowPlaying("7", "9", "Talk", "Album", "cov", "http://x/7.mp3", isLocal = false)
-        val vm = PlayerViewModel(controller(now), favorites)
+        val vm = PlayerViewModel(controller(now), favorites, downloads)
         vm.toggleFavorite()
         advanceUntilIdle()
         coVerify { favorites.toggle(match<Favorite> { it.audioId == "7" && it.url == "http://x/7.mp3" && it.albumTitle == "Album" }) }
     }
 
     @Test fun `toggleFavorite no-ops when nothing playing`() = runTest {
-        val vm = PlayerViewModel(controller(null), favorites)
+        val vm = PlayerViewModel(controller(null), favorites, downloads)
         vm.toggleFavorite()
         advanceUntilIdle()
         coVerify(exactly = 0) { favorites.toggle(any()) }
+    }
+
+    @Test fun `download enqueues current track`() = runTest {
+        val now = NowPlaying("7", "9", "Talk", "Album", "cov", "http://x/7.mp3", isLocal = false)
+        val vm = PlayerViewModel(controller(now), favorites, downloads)
+        vm.download()
+        advanceUntilIdle()
+        verify {
+            downloads.enqueue(
+                Audio("7", "9", "Talk", "http://x/7.mp3"),
+                Album("9", "Album", "cov", 0, 0),
+            )
+        }
     }
 }
