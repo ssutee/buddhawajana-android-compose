@@ -7,7 +7,7 @@ import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.ui.graphics.vector.ImageVector
 
 enum class TopDestination(val label: String, val icon: ImageVector) {
-    AUDIO("หลวงพ่อ", Icons.Default.Headphones),
+    AUDIO("เสียง", Icons.Default.Headphones),
     BOOKS("หนังสือ", Icons.AutoMirrored.Filled.MenuBook),
     YOUTUBE("ยูทูบ", Icons.Default.PlayCircle),
 }
