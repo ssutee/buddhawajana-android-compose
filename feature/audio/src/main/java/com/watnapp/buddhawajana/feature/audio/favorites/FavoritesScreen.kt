@@ -54,6 +54,7 @@ fun FavoritesScreen(
                 )
                 SwipeToDismissBox(
                     state = dismiss,
+                    enableDismissFromStartToEnd = false,
                     backgroundContent = {
                         Box(
                             Modifier.fillMaxSize().background(MaterialTheme.colorScheme.errorContainer)
