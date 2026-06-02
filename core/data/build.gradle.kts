@@ -14,4 +14,5 @@ dependencies {
     ksp(libs.room.compiler)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.koin.android)
+    implementation(libs.okhttp)
 }
