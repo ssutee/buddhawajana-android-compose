@@ -26,13 +26,18 @@ class AlbumsViewModelTest {
     @Before fun setUp() = Dispatchers.setMain(dispatcher)
     @After fun tearDown() = Dispatchers.resetMain()
 
+    private val favorites: com.watnapp.buddhawajana.core.data.repo.FavoriteRepository =
+        io.mockk.mockk(relaxed = true) {
+            io.mockk.every { favorites } returns kotlinx.coroutines.flow.flowOf(emptyList())
+        }
+
     private fun repo(albums: List<Album>): AlbumRepository = mockk(relaxed = true) {
         every { stream() } returns flowOf(albums)
         coEvery { refresh() } returns Result.success(Unit)
     }
 
     @Test fun `emits content from stream`() = runTest {
-        val vm = AlbumsViewModel(repo(listOf(Album("1", "ชุดA", null, 3, 0))))
+        val vm = AlbumsViewModel(repo(listOf(Album("1", "ชุดA", null, 3, 0))), favorites)
         vm.state.test {
             assertEquals(UiState.Loading, awaitItem())
             val content = awaitItem()
@@ -45,12 +50,31 @@ class AlbumsViewModelTest {
         val vm = AlbumsViewModel(repo(listOf(
             Album("1", "ตถาคต", null, 1, 0),
             Album("2", "ภิกษุ", null, 1, 0),
-        )))
+        )), favorites)
         vm.onSearch("ตถา")
         vm.state.test {
             var last: UiState<List<Album>>? = null
             repeat(2) { last = awaitItem() }
             assertTrue(last is UiState.Content && (last as UiState.Content).data.single().id == "1")
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test fun `favoriteCount reflects repo`() = runTest {
+        val favs: com.watnapp.buddhawajana.core.data.repo.FavoriteRepository =
+            io.mockk.mockk(relaxed = true) {
+                io.mockk.every { favorites } returns kotlinx.coroutines.flow.flowOf(
+                    listOf(
+                        com.watnapp.buddhawajana.core.model.Favorite("1", "T", "u", "9", "A", null, 1),
+                        com.watnapp.buddhawajana.core.model.Favorite("2", "T", "u", "9", "A", null, 2),
+                    )
+                )
+            }
+        val vm = AlbumsViewModel(repo(emptyList()), favs)
+        vm.favoriteCount.test {
+            var last = 0
+            repeat(2) { last = awaitItem() }
+            org.junit.Assert.assertEquals(2, last)
             cancelAndIgnoreRemainingEvents()
         }
     }

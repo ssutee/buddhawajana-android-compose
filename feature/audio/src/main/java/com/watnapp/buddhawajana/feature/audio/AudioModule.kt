@@ -8,7 +8,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val audioModule = module {
-    viewModel { AlbumsViewModel(get()) }
+    viewModel { AlbumsViewModel(get(), get()) }
     viewModel { (albumId: String) -> AudioListViewModel(albumId, get(), get()) }
     viewModel { PlayerViewModel(get(), get()) }
     viewModel { FavoritesViewModel(get(), get()) }

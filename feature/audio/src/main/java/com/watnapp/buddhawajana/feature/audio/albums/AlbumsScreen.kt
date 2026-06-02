@@ -11,10 +11,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,8 +36,10 @@ import com.watnapp.buddhawajana.core.ui.state.UiState
 fun AlbumsScreen(
     state: UiState<List<Album>>,
     query: String,
+    favoriteCount: Int,
     onSearch: (String) -> Unit,
     onRefresh: () -> Unit,
+    onOpenFavorites: () -> Unit,
     onOpenAlbum: (Album) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -45,6 +49,10 @@ fun AlbumsScreen(
             singleLine = true, modifier = Modifier.fillMaxWidth().padding(Spacing.m),
             placeholder = { Text("ค้นหาอัลบั้ม") },
         )
+        if (query.isBlank()) {
+            FavoritesCard(count = favoriteCount, onClick = onOpenFavorites)
+            HorizontalDivider()
+        }
         when (state) {
             is UiState.Loading -> LoadingView()
             is UiState.Empty -> EmptyStateView("ไม่พบอัลบั้ม")
@@ -57,6 +65,22 @@ fun AlbumsScreen(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun FavoritesCard(count: Int, onClick: () -> Unit) {
+    ListItem(
+        leadingContent = {
+            Icon(Icons.Default.Favorite, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+        },
+        headlineContent = { Text("รายการโปรด") },
+        trailingContent = {
+            if (count > 0) Text("$count", style = MaterialTheme.typography.bodyMedium)
+            else Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
+        },
+        modifier = Modifier.clickable(onClick = onClick),
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
