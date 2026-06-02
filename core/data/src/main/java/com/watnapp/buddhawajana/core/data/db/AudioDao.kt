@@ -19,4 +19,7 @@ interface AudioDao {
 
     @Query("SELECT COUNT(*) FROM audio")
     suspend fun count(): Int
+
+    @Query("UPDATE audio SET duration_ms = :durationMs, size_bytes = :sizeBytes WHERE audio_id = :audioId")
+    suspend fun updateMetadata(audioId: Long, durationMs: Long?, sizeBytes: Long?)
 }

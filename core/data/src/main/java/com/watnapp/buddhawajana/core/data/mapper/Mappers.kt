@@ -6,6 +6,7 @@ import com.watnapp.buddhawajana.core.data.db.BookEntity
 import com.watnapp.buddhawajana.core.data.db.BookmarkEntity
 import com.watnapp.buddhawajana.core.data.db.PlaybackProgressEntity
 import com.watnapp.buddhawajana.core.data.db.ReadingProgressEntity
+import com.watnapp.buddhawajana.core.common.toHttpsOrSelf
 import com.watnapp.buddhawajana.core.model.Album
 import com.watnapp.buddhawajana.core.model.Audio
 import com.watnapp.buddhawajana.core.model.Book
@@ -53,7 +54,7 @@ fun BookEntity.toModel(): Book = Book(
 fun AlbumDto.toEntity(): AlbumEntity = AlbumEntity(
     albumId = id.toLong(),
     title = albumName ?: "",
-    coverUrl = albumCover ?: "",
+    coverUrl = albumCover?.toHttpsOrSelf() ?: "",
     itemCount = count ?: 0,
     position = 0,
     viewCount = 0,
@@ -73,11 +74,11 @@ fun AudioDto.toEntity(albumId: String): AudioEntity = AudioEntity(
     audioId = id.toLong(),
     albumId = albumId.toLong(),
     title = name ?: "",
-    url = fileUrl ?: "",
-    // remaining columns keep entity defaults
+    url = fileUrl?.toHttpsOrSelf() ?: "",
     status = 0,
     requestId = 0,
     progress = 0,
+    // duration_ms / size_bytes keep entity defaults (null) — populated later by MetadataProber
 )
 
 fun AudioEntity.toModel(): Audio = Audio(
@@ -85,6 +86,8 @@ fun AudioEntity.toModel(): Audio = Audio(
     albumId = albumId.toString(),
     title = title,
     url = url,
+    durationMs = durationMs,
+    sizeBytes = sizeBytes,
 )
 
 // ---- Bookmark ----

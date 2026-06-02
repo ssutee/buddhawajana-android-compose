@@ -29,6 +29,8 @@ data class AudioEntity(
     @ColumnInfo(name = "status") var status: Int = 0,
     @ColumnInfo(name = "request_id") var requestId: Int = 0,
     @ColumnInfo(name = "progress") var progress: Int = 0,
+    @ColumnInfo(name = "duration_ms") var durationMs: Long? = null,
+    @ColumnInfo(name = "size_bytes") var sizeBytes: Long? = null,
 ) {
     @Ignore
     constructor() : this(0)
