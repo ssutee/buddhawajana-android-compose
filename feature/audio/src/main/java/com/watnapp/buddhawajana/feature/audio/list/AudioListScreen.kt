@@ -2,12 +2,19 @@ package com.watnapp.buddhawajana.feature.audio.list
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -57,10 +64,14 @@ fun AudioListScreen(
             is UiState.Empty -> EmptyStateView("ไม่พบไฟล์เสียง")
             is UiState.Error -> ErrorView(state.message, onRefresh)
             is UiState.Content -> Column(Modifier.fillMaxSize()) {
-                androidx.compose.material3.TextButton(
+                FilledTonalButton(
                     onClick = onDownloadAll,
-                    modifier = Modifier.padding(horizontal = 8.dp),
-                ) { Text("ดาวน์โหลดทั้งหมด") }
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.m, vertical = Spacing.xs),
+                ) {
+                    Icon(Icons.Default.Download, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(Spacing.xs))
+                    Text("ดาวน์โหลดทั้งหมด")
+                }
                 LazyColumn(Modifier.fillMaxSize()) {
                     itemsIndexed(state.data, key = { _, a -> a.id }) { index, audio ->
                         LaunchedEffect(audio.id) { onRowVisible(audio) }
