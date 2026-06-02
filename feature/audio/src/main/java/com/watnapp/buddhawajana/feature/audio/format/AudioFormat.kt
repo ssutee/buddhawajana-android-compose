@@ -13,7 +13,10 @@ fun formatTime(ms: Long): String {
 fun formatRowMeta(durationMs: Long?, sizeBytes: Long?): String {
     val parts = listOfNotNull(
         durationMs?.let { formatTime(it) },
-        sizeBytes?.let { "%d MB".format((it / 1_000_000.0).toLong().coerceAtLeast(0)) },
+        sizeBytes?.let { bytes ->
+            val mb = bytes / 1_000_000.0
+            if (mb < 1.0) "< 1 MB" else "%d MB".format(mb.toLong())
+        },
     )
     return if (parts.isEmpty()) "—" else parts.joinToString(" · ")
 }

@@ -20,7 +20,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Serializable private data object AlbumsRoute
-@Serializable private data class AudioListRoute(val albumId: String, val albumTitle: String)
+@Serializable private data class AudioListRoute(val albumId: String, val albumTitle: String, val albumCoverUrl: String?)
 
 /**
  * Browse pane for the AUDIO tab. Hosts albums → audio-list internally so the bottom
@@ -40,7 +40,7 @@ fun AudioPane(onOpenPlayer: () -> Unit, modifier: Modifier = Modifier) {
                 query = query,
                 onSearch = vm::onSearch,
                 onRefresh = vm::refresh,
-                onOpenAlbum = { album -> nav.navigate(AudioListRoute(album.id, album.title)) },
+                onOpenAlbum = { album -> nav.navigate(AudioListRoute(album.id, album.title, album.coverUrl)) },
             )
         }
         composable<AudioListRoute> { entry ->
@@ -62,7 +62,7 @@ fun AudioPane(onOpenPlayer: () -> Unit, modifier: Modifier = Modifier) {
                 onRowVisible = vm::onRowVisible,
                 onPlay = { index ->
                     if (audios.isNotEmpty()) {
-                        vm.play(Album(route.albumId, route.albumTitle, now?.artworkUrl, audios.size, 0), audios, index)
+                        vm.play(Album(route.albumId, route.albumTitle, route.albumCoverUrl, audios.size, 0), audios, index)
                         onOpenPlayer()
                     }
                 },

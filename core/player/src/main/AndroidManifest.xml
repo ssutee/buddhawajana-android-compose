@@ -5,7 +5,7 @@
 
     <application>
         <service
-            android:name=".player.PlaybackService"
+            android:name=".PlaybackService"
             android:foregroundServiceType="mediaPlayback"
             android:exported="true">
             <intent-filter>

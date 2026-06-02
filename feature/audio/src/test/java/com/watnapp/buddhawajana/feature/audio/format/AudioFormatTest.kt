@@ -23,4 +23,7 @@ class AudioFormatTest {
         assertEquals("5:23", formatRowMeta(323_000, null))
         assertEquals("12 MB", formatRowMeta(null, 12_000_000))
     }
+
+    @Test fun `formatRowMeta shows less-than-1MB for sub-1MB files`() =
+        assertEquals("< 1 MB", formatRowMeta(null, 500_000))
 }

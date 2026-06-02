@@ -49,7 +49,6 @@ accompanistSwiperefresh = "0.30.0"
 composeHtml = "1.0.2"
 pdfViewer = "v1.0.7"
 androidxWindow = "1.0.0"
-argPlayer = "v3.1.1"
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -112,7 +111,6 @@ accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiper
 compose-html = { module = "com.github.ireward:compose-html", version.ref = "composeHtml" }
 pdf-viewer = { module = "com.github.afreakyelf:Pdf-Viewer", version.ref = "pdfViewer" }
 androidx-window = { module = "androidx.window:window", version.ref = "androidxWindow" }
-arg-player = { module = "com.github.ssutee:ArgPlayer", version.ref = "argPlayer" }
 koin-androidx-navigation = { module = "io.insert-koin:koin-androidx-navigation", version.ref = "koin" }
 
 [plugins]
