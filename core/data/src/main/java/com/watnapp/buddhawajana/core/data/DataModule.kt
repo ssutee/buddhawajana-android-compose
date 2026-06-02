@@ -2,6 +2,7 @@ package com.watnapp.buddhawajana.core.data
 
 import androidx.room.Room
 import com.watnapp.buddhawajana.core.data.db.AppDatabase
+import com.watnapp.buddhawajana.core.data.download.AudioFileStore
 import com.watnapp.buddhawajana.core.data.download.BookFileStore
 import com.watnapp.buddhawajana.core.data.download.FileDownloader
 import com.watnapp.buddhawajana.core.data.download.MetadataProber
@@ -9,6 +10,7 @@ import com.watnapp.buddhawajana.core.data.repo.AlbumRepository
 import com.watnapp.buddhawajana.core.data.repo.AudioRepository
 import com.watnapp.buddhawajana.core.data.repo.BookmarkRepository
 import com.watnapp.buddhawajana.core.data.repo.BookRepository
+import com.watnapp.buddhawajana.core.data.repo.DownloadRepository
 import com.watnapp.buddhawajana.core.data.repo.FavoriteRepository
 import com.watnapp.buddhawajana.core.data.repo.PlaybackProgressRepository
 import com.watnapp.buddhawajana.core.data.repo.ReadingProgressRepository
@@ -19,7 +21,7 @@ import org.koin.dsl.module
 val dataModule = module {
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, AppDatabase.NAME)
-            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3)
+            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3, AppDatabase.MIGRATION_3_4)
             .build()
     }
     single { get<AppDatabase>().bookDao() }
@@ -29,6 +31,7 @@ val dataModule = module {
     single { get<AppDatabase>().readingProgressDao() }
     single { get<AppDatabase>().playbackProgressDao() }
     single { get<AppDatabase>().favoriteDao() }
+    single { get<AppDatabase>().downloadDao() }
     single { BookRepository(get(), get()) }
     single { AlbumRepository(get(), get()) }
     single { AudioRepository(get(), get(), get()) }
@@ -37,6 +40,8 @@ val dataModule = module {
     single { FileDownloader(get<OkHttpClient>()) }
     single { MetadataProber(get<OkHttpClient>()) }
     single { BookFileStore(androidContext()) }
+    single { AudioFileStore(androidContext()) }
     single { PlaybackProgressRepository(get()) }
     single { FavoriteRepository(get()) }
+    single { DownloadRepository(androidContext(), get(), get()) }
 }
