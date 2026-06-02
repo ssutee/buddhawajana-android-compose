@@ -12,15 +12,13 @@ class PdfDocument private constructor(
     private val renderer: PdfRenderer,
 ) {
     val pageCount: Int get() = renderer.pageCount
-    private val cache = object : LruCache<Int, Bitmap>(6) {
-        override fun entryRemoved(evicted: Boolean, key: Int, oldValue: Bitmap, newValue: Bitmap?) {
-            if (evicted && !oldValue.isRecycled) oldValue.recycle()
-        }
-    }
+    // Do NOT recycle evicted bitmaps: Compose may still hold an ImageBitmap referencing
+    // a page that fell out of the cache during fast seeking. Let GC reclaim them.
+    private val cache = LruCache<Int, Bitmap>(6)
 
     @Synchronized
     fun renderPage(index: Int, targetWidthPx: Int): Bitmap {
-        cache.get(index)?.let { if (!it.isRecycled) return it }
+        cache.get(index)?.let { return it }
         renderer.openPage(index).use { page ->
             val scale = targetWidthPx.toFloat() / page.width
             val w = targetWidthPx
