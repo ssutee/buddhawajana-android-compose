@@ -13,6 +13,7 @@ data class NowPlaying(
     val album: String,
     val artworkUrl: String?,
     val url: String,
+    val isLocal: Boolean,
 )
 
 sealed interface SleepTimerState {

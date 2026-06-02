@@ -55,7 +55,7 @@ class PlayerViewModelTest {
     }
 
     @Test fun `toggleFavorite snapshots current track`() = runTest {
-        val now = NowPlaying("7", "9", "Talk", "Album", "cov", "http://x/7.mp3")
+        val now = NowPlaying("7", "9", "Talk", "Album", "cov", "http://x/7.mp3", isLocal = false)
         val vm = PlayerViewModel(controller(now), favorites)
         vm.toggleFavorite()
         advanceUntilIdle()

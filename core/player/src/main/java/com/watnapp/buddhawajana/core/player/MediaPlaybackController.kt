@@ -31,6 +31,7 @@ class MediaPlaybackController(
     private val context: Context,
     private val progress: PlaybackProgressRepository,
     private val prefs: PlaybackPrefs,
+    private val localFile: (audioId: String) -> java.io.File?,
 ) : PlaybackController {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
@@ -105,6 +106,7 @@ class MediaPlaybackController(
             album = md.albumTitle?.toString() ?: "",
             artworkUrl = md.artworkUri?.toString(),
             url = item.localConfiguration?.uri?.toString() ?: "",
+            isLocal = item.localConfiguration?.uri?.scheme == "file",
         )
     }
 
@@ -120,7 +122,7 @@ class MediaPlaybackController(
         val items = audios.map { audio ->
             MediaItem.Builder()
                 .setMediaId(audio.id)
-                .setUri(Uri.parse(audio.url))
+                .setUri(localFile(audio.id)?.let(Uri::fromFile) ?: Uri.parse(audio.url))
                 .setMediaMetadata(
                     MediaMetadata.Builder()
                         .setTitle(audio.title)
