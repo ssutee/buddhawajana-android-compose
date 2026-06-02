@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="splash_bg">#541617</color>
     <color name="topbar_bg">#CD9759</color>
+    <!-- Adaptive launcher icon background — warm taupe sampled from the brand art gradient. -->
+    <color name="ic_launcher_bg">#C3AD9E</color>
 </resources>
