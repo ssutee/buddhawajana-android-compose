@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.FastRewind
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
@@ -44,6 +46,7 @@ fun PlayerScreen(vm: PlayerViewModel, onBack: () -> Unit, modifier: Modifier = M
     val isPlaying by vm.isPlaying.collectAsState()
     val position by vm.positionMs.collectAsState()
     val duration by vm.durationMs.collectAsState()
+    val isFavorite by vm.isFavorite.collectAsState()
 
     Column(
         modifier.fillMaxSize().padding(24.dp),
@@ -87,6 +90,12 @@ fun PlayerScreen(vm: PlayerViewModel, onBack: () -> Unit, modifier: Modifier = M
             }
             IconButton(onClick = vm::skipForward) { Icon(Icons.Default.FastForward, "เดิน 15 วิ") }
             IconButton(onClick = vm::next) { Icon(Icons.Default.SkipNext, "ถัดไป") }
+            IconButton(onClick = vm::toggleFavorite, enabled = now != null) {
+                Icon(
+                    if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    contentDescription = "รายการโปรด",
+                )
+            }
         }
 
         SpeedAndSleepRow(vm)
