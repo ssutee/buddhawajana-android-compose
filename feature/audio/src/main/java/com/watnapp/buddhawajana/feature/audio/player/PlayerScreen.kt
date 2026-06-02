@@ -92,20 +92,18 @@ fun PlayerScreen(vm: PlayerViewModel, onBack: () -> Unit, modifier: Modifier = M
         }
 
         SpeedAndSleepRow(vm)
+
+        ActionRow(vm)
     }
 }
 
 @Composable
-private fun SpeedAndSleepRow(vm: PlayerViewModel) {
-    val speed by vm.speed.collectAsState()
-    val sleep by vm.sleepTimer.collectAsState()
+private fun ActionRow(vm: PlayerViewModel) {
     val isFavorite by vm.isFavorite.collectAsState()
     val now by vm.nowPlaying.collectAsState()
-    var speedOpen by remember { mutableStateOf(false) }
-    var sleepOpen by remember { mutableStateOf(false) }
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         IconButton(onClick = vm::toggleFavorite, enabled = now != null) {
             Icon(
@@ -113,6 +111,17 @@ private fun SpeedAndSleepRow(vm: PlayerViewModel) {
                 contentDescription = "รายการโปรด",
             )
         }
+        // Download button goes here (deferred to the Downloads vertical).
+    }
+}
+
+@Composable
+private fun SpeedAndSleepRow(vm: PlayerViewModel) {
+    val speed by vm.speed.collectAsState()
+    val sleep by vm.sleepTimer.collectAsState()
+    var speedOpen by remember { mutableStateOf(false) }
+    var sleepOpen by remember { mutableStateOf(false) }
+    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
         Box {
             TextButton(onClick = { speedOpen = true }) { Text(speedLabel(speed)) }
             DropdownMenu(expanded = speedOpen, onDismissRequest = { speedOpen = false }) {
