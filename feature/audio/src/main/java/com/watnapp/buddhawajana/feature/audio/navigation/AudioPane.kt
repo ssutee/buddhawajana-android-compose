@@ -59,6 +59,7 @@ fun AudioPane(onOpenPlayer: () -> Unit, modifier: Modifier = Modifier) {
                 is UiState.Content -> s.data
                 else -> emptyList()
             }
+            val routeAlbum = Album(route.albumId, route.albumTitle, route.albumCoverUrl, 0, 0)
             AudioListScreen(
                 state = state,
                 query = query,
@@ -68,10 +69,15 @@ fun AudioPane(onOpenPlayer: () -> Unit, modifier: Modifier = Modifier) {
                 onRowVisible = vm::onRowVisible,
                 onPlay = { index ->
                     if (audios.isNotEmpty()) {
-                        vm.play(Album(route.albumId, route.albumTitle, route.albumCoverUrl, audios.size, 0), audios, index)
+                        vm.play(routeAlbum.copy(itemCount = audios.size), audios, index)
                         onOpenPlayer()
                     }
                 },
+                downloadStateFor = vm::downloadState,
+                onDownload = { audio -> vm.download(audio, routeAlbum) },
+                onCancelDownload = vm::cancelDownload,
+                onDeleteDownload = vm::deleteDownload,
+                onDownloadAll = { vm.downloadAll(routeAlbum, audios) },
             )
         }
         composable<FavoritesRoute> {

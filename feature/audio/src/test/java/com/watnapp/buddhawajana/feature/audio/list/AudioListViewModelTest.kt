@@ -29,6 +29,9 @@ class AudioListViewModelTest {
     @Before fun setUp() = Dispatchers.setMain(dispatcher)
     @After fun tearDown() = Dispatchers.resetMain()
 
+    private val downloads: com.watnapp.buddhawajana.core.data.repo.DownloadRepository =
+        io.mockk.mockk(relaxed = true)
+
     private fun controller(): PlaybackController = mockk(relaxed = true) {
         every { nowPlaying } returns MutableStateFlow(null)
     }
@@ -41,7 +44,7 @@ class AudioListViewModelTest {
             ))
             coEvery { refresh("9") } returns Result.success(Unit)
         }
-        val vm = AudioListViewModel("9", repo, controller())
+        val vm = AudioListViewModel("9", repo, controller(), downloads)
         vm.onSearch("สอง")
         vm.state.test {
             var last: UiState<List<Audio>>? = null
@@ -58,7 +61,7 @@ class AudioListViewModelTest {
             coEvery { refresh("9") } returns Result.success(Unit)
             coEvery { ensureMetadata(any()) } returns Unit
         }
-        val vm = AudioListViewModel("9", repo, controller())
+        val vm = AudioListViewModel("9", repo, controller(), downloads)
         vm.onRowVisible(audio)
         advanceUntilIdle()
         coVerify { repo.ensureMetadata(audio) }
@@ -71,10 +74,23 @@ class AudioListViewModelTest {
             coEvery { refresh("9") } returns Result.success(Unit)
             coEvery { ensureMetadata(any()) } returns Unit
         }
-        val vm = AudioListViewModel("9", repo, controller())
+        val vm = AudioListViewModel("9", repo, controller(), downloads)
         vm.onRowVisible(audio)
         vm.onRowVisible(audio)
         advanceUntilIdle()
         coVerify(exactly = 1) { repo.ensureMetadata(audio) }
+    }
+
+    @Test fun `downloadAll enqueues whole album`() = runTest {
+        val repo: AudioRepository = mockk(relaxed = true) {
+            every { stream("9") } returns flowOf(emptyList())
+            coEvery { refresh("9") } returns Result.success(Unit)
+        }
+        val vm = AudioListViewModel("9", repo, controller(), downloads)
+        val album = com.watnapp.buddhawajana.core.model.Album("9", "A", null, 0, 0)
+        val list = listOf(com.watnapp.buddhawajana.core.model.Audio("1", "9", "T", "u"))
+        vm.downloadAll(album, list)
+        advanceUntilIdle()
+        io.mockk.coVerify { downloads.enqueueAll(album, list) }
     }
 }

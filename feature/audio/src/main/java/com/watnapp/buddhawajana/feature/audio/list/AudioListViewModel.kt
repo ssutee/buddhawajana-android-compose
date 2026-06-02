@@ -1,12 +1,15 @@
 package com.watnapp.buddhawajana.feature.audio.list
 
 import androidx.lifecycle.viewModelScope
+import com.watnapp.buddhawajana.core.data.download.DownloadState
 import com.watnapp.buddhawajana.core.data.repo.AudioRepository
+import com.watnapp.buddhawajana.core.data.repo.DownloadRepository
 import com.watnapp.buddhawajana.core.model.Album
 import com.watnapp.buddhawajana.core.model.Audio
 import com.watnapp.buddhawajana.core.player.PlaybackController
 import com.watnapp.buddhawajana.core.ui.BaseViewModel
 import com.watnapp.buddhawajana.core.ui.state.UiState
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -19,6 +22,7 @@ class AudioListViewModel(
     private val albumId: String,
     private val repo: AudioRepository,
     private val controller: PlaybackController,
+    private val downloads: DownloadRepository,
 ) : BaseViewModel() {
 
     private val query = MutableStateFlow("")
@@ -53,4 +57,10 @@ class AudioListViewModel(
     fun play(album: Album, audios: List<Audio>, index: Int) {
         controller.setQueue(album, audios, index)
     }
+
+    fun downloadState(audioId: String): Flow<DownloadState> = downloads.state(audioId)
+    fun download(audio: Audio, album: Album) = downloads.enqueue(audio, album)
+    fun cancelDownload(audioId: String) = downloads.cancel(audioId)
+    fun deleteDownload(audioId: String) = viewModelScope.launch { downloads.delete(audioId) }
+    fun downloadAll(album: Album, audios: List<Audio>) = viewModelScope.launch { downloads.enqueueAll(album, audios) }
 }
