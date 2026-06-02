@@ -15,4 +15,5 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.koin.android)
     implementation(libs.okhttp)
+    implementation(libs.work.runtime.ktx)
 }
