@@ -46,14 +46,18 @@ fun BookListScreen(
             is UiState.Loading -> LoadingView()
             is UiState.Empty -> EmptyStateView("ไม่พบหนังสือ")
             is UiState.Error -> ErrorView(state.message, onRefresh)
-            is UiState.Content -> LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                contentPadding = PaddingValues(Spacing.m),
-                horizontalArrangement = Arrangement.spacedBy(Spacing.m),
-                verticalArrangement = Arrangement.spacedBy(Spacing.m),
-            ) {
-                items(state.data, key = { it.book.id }) { item ->
-                    BookCell(item, onClick = { onOpen(item.book.id.toLong()) }, onLongClick = { onDelete(item.book.id.toLong()) })
+            is UiState.Content -> BoxWithConstraints(Modifier.fillMaxSize()) {
+                // 3 columns on a phone, more as width grows (tablets/landscape).
+                val cols = maxOf(3, (maxWidth.value / 140f).toInt())
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(cols),
+                    contentPadding = PaddingValues(Spacing.m),
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.m),
+                    verticalArrangement = Arrangement.spacedBy(Spacing.m),
+                ) {
+                    items(state.data, key = { it.book.id }) { item ->
+                        BookCell(item, onClick = { onOpen(item.book.id.toLong()) }, onLongClick = { onDelete(item.book.id.toLong()) })
+                    }
                 }
             }
         }
