@@ -6,7 +6,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DownloadDone
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -66,6 +69,20 @@ private fun BookCell(item: BookUi, onClick: () -> Unit, onLongClick: () -> Unit)
     ) {
         Box(Modifier.fillMaxWidth().aspectRatio(3f / 4f).clip(RoundedCornerShape(8.dp))) {
             CachedAsyncImage(item.book.coverUrl, item.book.title, Modifier.fillMaxSize())
+            if (item.downloaded) {
+                Surface(
+                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
+                    shape = CircleShape,
+                    modifier = Modifier.align(Alignment.BottomEnd).padding(6.dp),
+                ) {
+                    Icon(
+                        Icons.Default.DownloadDone,
+                        contentDescription = "ดาวน์โหลดแล้ว",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(3.dp).size(16.dp),
+                    )
+                }
+            }
         }
         Text(
             item.book.title,
