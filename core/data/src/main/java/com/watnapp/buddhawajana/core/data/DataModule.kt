@@ -11,12 +11,13 @@ import org.koin.dsl.module
 val dataModule = module {
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, AppDatabase.NAME)
-            .addMigrations(AppDatabase.MIGRATION_1_2)
             .build()
     }
     single { get<AppDatabase>().bookDao() }
     single { get<AppDatabase>().albumDao() }
     single { get<AppDatabase>().audioDao() }
+    single { get<AppDatabase>().bookmarkDao() }
+    single { get<AppDatabase>().readingProgressDao() }
     single { BookRepository(get(), get()) }
     single { AlbumRepository(get(), get()) }
     single { AudioRepository(get(), get()) }
