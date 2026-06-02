@@ -30,6 +30,16 @@ class MainApplication : Application() {
             // appModule: legacy YouTube + Book DI (Audio has migrated to :feature:audio).
             modules(networkModule, dataModule, playerModule, audioModule, booksModule, appModule)
         }
+        if (android.os.Build.VERSION.SDK_INT >= 26) {
+            val mgr = getSystemService(android.app.NotificationManager::class.java)
+            mgr.createNotificationChannel(
+                android.app.NotificationChannel(
+                    "downloads",
+                    "ดาวน์โหลด",
+                    android.app.NotificationManager.IMPORTANCE_LOW,
+                ),
+            )
+        }
     }
 }
 
