@@ -22,4 +22,17 @@ class MappersTest {
         val model = dto.toEntity().toModel()
         assertEquals("พุทธวจน", model.category)
     }
+
+    @Test
+    fun `DownloadEntity maps to model preserving fields`() {
+        val e = com.watnapp.buddhawajana.core.data.download.DownloadEntity(
+            audioId = "5", title = "T", url = "u", albumId = "9", albumTitle = "A",
+            coverUrl = null, fileName = "5.mp3", sizeBytes = 1234L, completedAt = 99L,
+        )
+        val m = e.toModel()
+        assertEquals("5", m.audioId)
+        assertEquals("A", m.albumTitle)
+        assertEquals(1234L, m.sizeBytes)
+        assertEquals(99L, m.completedAt)
+    }
 }

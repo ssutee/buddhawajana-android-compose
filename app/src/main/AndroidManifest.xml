@@ -42,6 +42,13 @@
             </intent-filter>
         </activity>
 
+        <!-- WorkManager's foreground service needs the dataSync type for the download
+             notification on Android 14+; merge it into the work-runtime AAR declaration. -->
+        <service
+            android:name="androidx.work.impl.foreground.SystemForegroundService"
+            android:foregroundServiceType="dataSync"
+            tools:node="merge" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
