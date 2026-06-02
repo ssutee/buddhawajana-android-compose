@@ -1,14 +1,19 @@
 package com.watnapp.buddhawajana.navigation
 
+import android.content.Intent
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.FileProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import androidx.compose.runtime.Composable
+import com.watnapp.buddhawajana.core.data.download.BookFileStore
 import com.watnapp.buddhawajana.feature.books.reader.ReaderScreen
 import com.watnapp.buddhawajana.feature.books.reader.ReaderViewModel
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
 
 @Serializable private data object HomeRoute
@@ -24,10 +29,27 @@ fun BuddhawajanaNavHost() {
         composable<ReaderRoute> { entry ->
             val bookId = entry.toRoute<ReaderRoute>().bookId
             val vm: ReaderViewModel = koinViewModel { parametersOf(bookId) }
+            val context = LocalContext.current
+            val fileStore: BookFileStore = koinInject()
             ReaderScreen(
                 vm = vm,
                 onBack = { nav.popBackStack() },
-                onShare = { /* BT11 wires FileProvider share */ },
+                onShare = {
+                    val file = fileStore.file(bookId)
+                    if (file.exists()) {
+                        val uri = FileProvider.getUriForFile(
+                            context,
+                            "${context.packageName}.fileprovider",
+                            file,
+                        )
+                        val intent = Intent(Intent.ACTION_SEND).apply {
+                            type = "application/pdf"
+                            putExtra(Intent.EXTRA_STREAM, uri)
+                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        }
+                        context.startActivity(Intent.createChooser(intent, null))
+                    }
+                },
             )
         }
     }
