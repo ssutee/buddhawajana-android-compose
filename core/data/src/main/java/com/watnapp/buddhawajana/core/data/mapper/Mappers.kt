@@ -59,7 +59,7 @@ fun AlbumDto.toEntity(): AlbumEntity = AlbumEntity(
     albumId = id.toLong(),
     title = albumName ?: "",
     coverUrl = albumCover?.toHttpsOrSelf() ?: "",
-    itemCount = count ?: 0,
+    itemCount = count?.trim()?.toIntOrNull() ?: 0,
     position = 0,
     viewCount = 0,
 )
