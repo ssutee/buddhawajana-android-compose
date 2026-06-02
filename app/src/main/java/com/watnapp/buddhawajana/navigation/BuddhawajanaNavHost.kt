@@ -1,8 +1,15 @@
 package com.watnapp.buddhawajana.navigation
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -59,8 +66,29 @@ fun BuddhawajanaNavHost() {
             )
         }
         composable<PlayerRoute> {
+            RequestNotificationPermissionOnce()
             val playerVm: PlayerViewModel = koinViewModel()
             PlayerScreen(vm = playerVm, onBack = { nav.popBackStack() })
+        }
+    }
+}
+
+/**
+ * Requests POST_NOTIFICATIONS in-context the first time the player opens — playback is
+ * starting, so a media-control notification is about to appear. API 33+ only; no-op once granted.
+ */
+@Composable
+private fun RequestNotificationPermissionOnce() {
+    val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { }
+    LaunchedEffect(Unit) {
+        if (Build.VERSION.SDK_INT >= 33 &&
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 }
