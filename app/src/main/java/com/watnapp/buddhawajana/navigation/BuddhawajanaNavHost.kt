@@ -20,6 +20,7 @@ import com.watnapp.buddhawajana.feature.audio.player.PlayerScreen
 import com.watnapp.buddhawajana.feature.audio.player.PlayerViewModel
 import com.watnapp.buddhawajana.feature.books.reader.ReaderScreen
 import com.watnapp.buddhawajana.feature.books.reader.ReaderViewModel
+import com.watnapp.buddhawajana.ui.SettingsScreen
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -28,6 +29,7 @@ import org.koin.core.parameter.parametersOf
 @Serializable private data object HomeRoute
 @Serializable private data class ReaderRoute(val bookId: Long)
 @Serializable private data object PlayerRoute
+@Serializable private data object SettingsRoute
 
 @Composable
 fun BuddhawajanaNavHost() {
@@ -37,6 +39,7 @@ fun BuddhawajanaNavHost() {
             HomeScaffold(
                 onOpenBook = { id -> nav.navigate(ReaderRoute(id)) },
                 onOpenPlayer = { nav.navigate(PlayerRoute) },
+                onOpenSettings = { nav.navigate(SettingsRoute) },
             )
         }
         composable<ReaderRoute> { entry ->
@@ -69,6 +72,9 @@ fun BuddhawajanaNavHost() {
             RequestNotificationPermissionOnce()
             val playerVm: PlayerViewModel = koinViewModel()
             PlayerScreen(vm = playerVm, onBack = { nav.popBackStack() })
+        }
+        composable<SettingsRoute> {
+            SettingsScreen(onBack = { nav.popBackStack() })
         }
     }
 }

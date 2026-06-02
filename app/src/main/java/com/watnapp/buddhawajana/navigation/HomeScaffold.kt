@@ -22,7 +22,11 @@ import com.watnapp.buddhawajana.feature.youtube.YouTubeLauncher
 import org.koin.compose.koinInject
 
 @Composable
-fun HomeScaffold(onOpenBook: (Long) -> Unit, onOpenPlayer: () -> Unit) {
+fun HomeScaffold(
+    onOpenBook: (Long) -> Unit,
+    onOpenPlayer: () -> Unit,
+    onOpenSettings: () -> Unit,
+) {
     var selected by rememberSaveable { mutableStateOf(TopDestination.AUDIO) }
     val controller: PlaybackController = koinInject()
     val context = LocalContext.current
@@ -32,7 +36,7 @@ fun HomeScaffold(onOpenBook: (Long) -> Unit, onOpenPlayer: () -> Unit) {
     BuddhawajanaNavSuite(selected = selected, onSelect = { selected = it }) {
         Scaffold(
             topBar = {
-                BuddhawajanaTopBar(title = "พุทธวจน", onSettingsClick = { })
+                BuddhawajanaTopBar(title = "พุทธวจน", onSettingsClick = onOpenSettings)
             }
         ) { innerPadding ->
             Column(modifier = Modifier.padding(innerPadding)) {
