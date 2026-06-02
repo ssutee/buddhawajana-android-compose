@@ -14,6 +14,9 @@ class DownloadStateTest {
     @Test fun `enqueued is Queued`() =
         assertEquals(DownloadState.Queued, mapDownloadState(false, false, WorkInfo.State.ENQUEUED, 0f))
 
+    @Test fun `blocked is Queued`() =
+        assertEquals(DownloadState.Queued, mapDownloadState(false, false, WorkInfo.State.BLOCKED, 0f))
+
     @Test fun `running is Downloading with fraction`() =
         assertEquals(DownloadState.Downloading(0.3f), mapDownloadState(false, false, WorkInfo.State.RUNNING, 0.3f))
 

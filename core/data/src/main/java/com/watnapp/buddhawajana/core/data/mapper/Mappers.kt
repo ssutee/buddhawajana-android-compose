@@ -113,4 +113,5 @@ fun Favorite.toEntity() = FavoriteEntity(audioId, title, url, albumId, albumTitl
 
 // ---- Download ----
 
+// fileName is intentionally omitted — file location is derived from audioId via AudioFileStore
 fun DownloadEntity.toModel() = Download(audioId, title, url, albumId, albumTitle, coverUrl, sizeBytes, completedAt)
