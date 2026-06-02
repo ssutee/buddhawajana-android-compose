@@ -46,7 +46,6 @@ fun PlayerScreen(vm: PlayerViewModel, onBack: () -> Unit, modifier: Modifier = M
     val isPlaying by vm.isPlaying.collectAsState()
     val position by vm.positionMs.collectAsState()
     val duration by vm.durationMs.collectAsState()
-    val isFavorite by vm.isFavorite.collectAsState()
 
     Column(
         modifier.fillMaxSize().padding(24.dp),
@@ -90,12 +89,6 @@ fun PlayerScreen(vm: PlayerViewModel, onBack: () -> Unit, modifier: Modifier = M
             }
             IconButton(onClick = vm::skipForward) { Icon(Icons.Default.FastForward, "เดิน 15 วิ") }
             IconButton(onClick = vm::next) { Icon(Icons.Default.SkipNext, "ถัดไป") }
-            IconButton(onClick = vm::toggleFavorite, enabled = now != null) {
-                Icon(
-                    if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                    contentDescription = "รายการโปรด",
-                )
-            }
         }
 
         SpeedAndSleepRow(vm)
@@ -106,9 +99,20 @@ fun PlayerScreen(vm: PlayerViewModel, onBack: () -> Unit, modifier: Modifier = M
 private fun SpeedAndSleepRow(vm: PlayerViewModel) {
     val speed by vm.speed.collectAsState()
     val sleep by vm.sleepTimer.collectAsState()
+    val isFavorite by vm.isFavorite.collectAsState()
+    val now by vm.nowPlaying.collectAsState()
     var speedOpen by remember { mutableStateOf(false) }
     var sleepOpen by remember { mutableStateOf(false) }
-    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        IconButton(onClick = vm::toggleFavorite, enabled = now != null) {
+            Icon(
+                if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                contentDescription = "รายการโปรด",
+            )
+        }
         Box {
             TextButton(onClick = { speedOpen = true }) { Text(speedLabel(speed)) }
             DropdownMenu(expanded = speedOpen, onDismissRequest = { speedOpen = false }) {
