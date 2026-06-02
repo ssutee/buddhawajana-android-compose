@@ -1,19 +1,20 @@
 package com.watnapp.buddhawajana.feature.audio.albums
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,35 +43,39 @@ fun AlbumsScreen(
         OutlinedTextField(
             value = query, onValueChange = onSearch,
             singleLine = true, modifier = Modifier.fillMaxWidth().padding(Spacing.m),
-            placeholder = { Text("ค้นหาชุดเสียง") },
+            placeholder = { Text("ค้นหาอัลบั้ม") },
         )
         when (state) {
             is UiState.Loading -> LoadingView()
-            is UiState.Empty -> EmptyStateView("ไม่พบชุดเสียง")
+            is UiState.Empty -> EmptyStateView("ไม่พบอัลบั้ม")
             is UiState.Error -> ErrorView(state.message, onRefresh)
-            is UiState.Content -> LazyVerticalGrid(
-                columns = GridCells.Adaptive(110.dp),
-                contentPadding = PaddingValues(Spacing.m),
-                horizontalArrangement = Arrangement.spacedBy(Spacing.m),
-                verticalArrangement = Arrangement.spacedBy(Spacing.m),
-            ) {
+            is UiState.Content -> LazyColumn(Modifier.fillMaxSize()) {
                 items(state.data, key = { it.id }) { album ->
-                    AlbumCell(album, onClick = { onOpenAlbum(album) })
+                    AlbumRow(album, onClick = { onOpenAlbum(album) })
+                    HorizontalDivider()
                 }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun AlbumCell(album: Album, onClick: () -> Unit) {
-    Column(Modifier.clickable(onClick = onClick)) {
-        Box(Modifier.fillMaxWidth().aspectRatio(1f).clip(RoundedCornerShape(12.dp))) {
-            CachedAsyncImage(album.coverUrl, album.title, Modifier.fillMaxSize())
-        }
-        Text(album.title, style = MaterialTheme.typography.labelMedium, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(top = Spacing.xs))
-        if (album.itemCount > 0) {
-            Text("${album.itemCount} ตอน", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 2.dp))
-        }
-    }
+private fun AlbumRow(album: Album, onClick: () -> Unit) {
+    ListItem(
+        leadingContent = {
+            CachedAsyncImage(
+                album.coverUrl,
+                album.title,
+                Modifier.size(48.dp).clip(RoundedCornerShape(8.dp)),
+            )
+        },
+        headlineContent = {
+            Text(album.title, maxLines = 2, overflow = TextOverflow.Ellipsis)
+        },
+        trailingContent = {
+            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
+        },
+        modifier = Modifier.clickable(onClick = onClick),
+    )
 }
