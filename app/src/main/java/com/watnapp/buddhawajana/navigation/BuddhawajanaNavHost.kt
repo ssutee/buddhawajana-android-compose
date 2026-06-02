@@ -9,6 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.watnapp.buddhawajana.core.data.download.BookFileStore
+import com.watnapp.buddhawajana.feature.audio.player.PlayerScreen
+import com.watnapp.buddhawajana.feature.audio.player.PlayerViewModel
 import com.watnapp.buddhawajana.feature.books.reader.ReaderScreen
 import com.watnapp.buddhawajana.feature.books.reader.ReaderViewModel
 import kotlinx.serialization.Serializable
@@ -57,11 +59,8 @@ fun BuddhawajanaNavHost() {
             )
         }
         composable<PlayerRoute> {
-            val playerVm: com.watnapp.buddhawajana.feature.audio.player.PlayerViewModel = koinViewModel()
-            com.watnapp.buddhawajana.feature.audio.player.PlayerScreen(
-                vm = playerVm,
-                onBack = { nav.popBackStack() },
-            )
+            val playerVm: PlayerViewModel = koinViewModel()
+            PlayerScreen(vm = playerVm, onBack = { nav.popBackStack() })
         }
     }
 }

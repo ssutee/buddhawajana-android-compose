@@ -26,7 +26,8 @@ class MainApplication : Application() {
             //   legacy AppDatabase ("watna-compose.db") in appModule, so no Koin
             //   duplicate-type conflict.
             // booksModule: provides BookListViewModel and ReaderViewModel for :feature:books.
-            // appModule: legacy Audio/YouTube DI (kept until Task 11 migration).
+            // playerModule + audioModule: Media3 playback engine + :feature:audio.
+            // appModule: legacy YouTube + Book DI (Audio has migrated to :feature:audio).
             modules(networkModule, dataModule, playerModule, audioModule, booksModule, appModule)
         }
     }

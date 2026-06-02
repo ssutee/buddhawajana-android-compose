@@ -13,7 +13,11 @@ import com.watnapp.buddhawajana.navigation.BuddhawajanaNavHost
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (android.os.Build.VERSION.SDK_INT >= 33) {
+        if (android.os.Build.VERSION.SDK_INT >= 33 &&
+            androidx.core.content.ContextCompat.checkSelfPermission(
+                this, android.Manifest.permission.POST_NOTIFICATIONS
+            ) != android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
             registerForActivityResult(
                 androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
             ) { }.launch(android.Manifest.permission.POST_NOTIFICATIONS)
