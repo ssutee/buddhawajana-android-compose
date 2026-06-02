@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
+import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.automirrored.filled.NavigateBefore
 import androidx.compose.material.icons.automirrored.filled.NavigateNext
@@ -49,6 +50,7 @@ fun ReaderScreen(
     val state by vm.state.collectAsState()
     val page by vm.page.collectAsState()
     val bookmarks by vm.bookmarksFor.collectAsState(initial = emptyList())
+    val bookmarkedPages by vm.bookmarkedPages.collectAsState()
 
     var chrome by remember { mutableStateOf(true) }
     var showBookmarkSheet by remember { mutableStateOf(false) }
@@ -63,7 +65,8 @@ fun ReaderScreen(
                         else -> "กำลังโหลด…"
                     },
                     onBack = onBack,
-                    onAddBookmark = { vm.addBookmark(page) },
+                    isBookmarked = page in bookmarkedPages,
+                    onToggleBookmark = { vm.toggleBookmark(page) },
                     onShowBookmarks = { showBookmarkSheet = true },
                     onShare = onShare,
                 )
@@ -136,7 +139,8 @@ fun ReaderScreen(
 private fun ReaderTopBar(
     title: String,
     onBack: () -> Unit,
-    onAddBookmark: () -> Unit,
+    isBookmarked: Boolean,
+    onToggleBookmark: () -> Unit,
     onShowBookmarks: () -> Unit,
     onShare: () -> Unit,
 ) {
@@ -148,11 +152,14 @@ private fun ReaderTopBar(
             }
         },
         actions = {
-            IconButton(onClick = onAddBookmark) {
-                Icon(Icons.Default.BookmarkBorder, contentDescription = "เพิ่มบุ๊กมาร์ก")
+            IconButton(onClick = onToggleBookmark) {
+                Icon(
+                    if (isBookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                    contentDescription = if (isBookmarked) "ลบบุ๊กมาร์กหน้านี้" else "บุ๊กมาร์กหน้านี้",
+                )
             }
             IconButton(onClick = onShowBookmarks) {
-                Icon(Icons.Default.Bookmark, contentDescription = "บุ๊กมาร์ก")
+                Icon(Icons.Default.Bookmarks, contentDescription = "รายการบุ๊กมาร์ก")
             }
             IconButton(onClick = onShare) {
                 Icon(Icons.Default.Share, contentDescription = "แชร์")

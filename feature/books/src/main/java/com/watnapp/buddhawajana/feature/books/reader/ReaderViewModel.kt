@@ -11,9 +11,12 @@ import com.watnapp.buddhawajana.core.model.Bookmark
 import com.watnapp.buddhawajana.core.ui.BaseViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -38,6 +41,12 @@ class ReaderViewModel(
     val state: StateFlow<ReaderState> = _state.asStateFlow()
 
     val bookmarksFor: Flow<List<Bookmark>> = bookmarks.stream(bookId)
+
+    /** Pages that currently have a bookmark — drives the top-bar toggle icon. */
+    val bookmarkedPages: StateFlow<Set<Int>> =
+        bookmarksFor
+            .map { list -> list.mapTo(mutableSetOf()) { it.page } }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptySet())
 
     private val _page = MutableStateFlow(0)
     val page: StateFlow<Int> = _page.asStateFlow()
@@ -75,6 +84,13 @@ class ReaderViewModel(
 
     fun addBookmark(page: Int) = viewModelScope.launch { bookmarks.add(bookId, page, "หน้า ${page + 1}") }
     fun deleteBookmark(b: Bookmark) = viewModelScope.launch { bookmarks.delete(b) }
+
+    /** Add a bookmark on [page] if none exists there, otherwise remove the existing one(s). */
+    fun toggleBookmark(page: Int) = viewModelScope.launch {
+        val existing = bookmarks.stream(bookId).first().filter { it.page == page }
+        if (existing.isEmpty()) bookmarks.add(bookId, page, "หน้า ${page + 1}")
+        else existing.forEach { bookmarks.delete(it) }
+    }
 
     override fun onCleared() {
         super.onCleared()
