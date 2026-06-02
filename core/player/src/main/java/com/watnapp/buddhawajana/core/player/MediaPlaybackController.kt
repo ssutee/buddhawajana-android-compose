@@ -104,6 +104,7 @@ class MediaPlaybackController(
             title = md.title?.toString() ?: "",
             album = md.albumTitle?.toString() ?: "",
             artworkUrl = md.artworkUri?.toString(),
+            url = item.localConfiguration?.uri?.toString() ?: "",
         )
     }
 
