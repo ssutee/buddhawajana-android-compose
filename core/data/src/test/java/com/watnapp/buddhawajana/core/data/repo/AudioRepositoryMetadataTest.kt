@@ -2,6 +2,8 @@ package com.watnapp.buddhawajana.core.data.repo
 
 import com.watnapp.buddhawajana.core.data.db.AudioDao
 import com.watnapp.buddhawajana.core.data.db.AudioEntity
+import com.watnapp.buddhawajana.core.data.download.MetadataProber
+import com.watnapp.buddhawajana.core.model.Audio
 import com.watnapp.buddhawajana.core.network.AudioService
 import com.watnapp.buddhawajana.core.network.dto.AlbumDto
 import com.watnapp.buddhawajana.core.network.dto.AudioDto
@@ -9,6 +11,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 class AudioRepositoryMetadataTest {
@@ -37,5 +41,31 @@ class AudioRepositoryMetadataTest {
         assertEquals("T2", row.title)
         assertEquals(323_000L, row.durationMs)
         assertEquals(12_000_000L, row.sizeBytes)
+    }
+
+    @Test fun `ensureMetadata probes and persists when missing`() = runTest {
+        stored.add(AudioEntity(audioId = 2, albumId = 9, title = "T", url = "http://x/2.mp3"))
+        val prober = MetadataProber(headSize = { 7_000_000L }, readDuration = { 60_000L })
+        val repo = AudioRepository(dao, service, prober)
+        repo.ensureMetadata(Audio("2", "9", "T", "http://x/2.mp3"))
+        val row = dao.getAllOnce(9).single { it.audioId == 2L }
+        assertEquals(60_000L, row.durationMs)
+        assertEquals(7_000_000L, row.sizeBytes)
+    }
+
+    @Test fun `ensureMetadata no-ops when already fully probed`() = runTest {
+        var probed = false
+        val prober = MetadataProber(headSize = { probed = true; 1L }, readDuration = { probed = true; 1L })
+        val repo = AudioRepository(dao, service, prober)
+        repo.ensureMetadata(Audio("2", "9", "T", "http://x/2.mp3", durationMs = 1, sizeBytes = 2))
+        assertFalse(probed)
+    }
+
+    @Test fun `ensureMetadata no-ops when no prober`() = runTest {
+        stored.add(AudioEntity(audioId = 3, albumId = 9, title = "T", url = "http://x/3.mp3"))
+        val repo = AudioRepository(dao, service)
+        repo.ensureMetadata(Audio("3", "9", "T", "http://x/3.mp3"))
+        val row = dao.getAllOnce(9).single { it.audioId == 3L }
+        assertNull(row.durationMs)
     }
 }
