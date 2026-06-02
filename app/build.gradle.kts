@@ -70,6 +70,7 @@ dependencies {
     implementation(project(":feature:books"))
     implementation(project(":core:player"))
     implementation(project(":feature:audio"))
+    implementation(project(":feature:youtube"))
     implementation(libs.kotlinx.serialization.json)
 
     // ── Compose BOM + UI ──────────────────────────────────────────────────
