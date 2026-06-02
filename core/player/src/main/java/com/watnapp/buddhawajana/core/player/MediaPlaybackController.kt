@@ -65,8 +65,19 @@ class MediaPlaybackController(
                     _isPlaying.value = isPlaying
                     if (!isPlaying) saveProgress()
                 }
+                override fun onPositionDiscontinuity(
+                    oldPosition: Player.PositionInfo,
+                    newPosition: Player.PositionInfo,
+                    reason: Int,
+                ) {
+                    // Save the FINISHING track's real position (manual skip or auto-advance),
+                    // not the new track's 0. onMediaItemTransition fires after the switch, so
+                    // currentMediaItem there is already the new item.
+                    val oldId = oldPosition.mediaItem?.mediaId ?: return
+                    val oldPos = oldPosition.positionMs
+                    scope.launch { progress.save(oldId, oldPos) }
+                }
                 override fun onMediaItemTransition(item: MediaItem?, reason: Int) {
-                    saveProgress()
                     updateNowPlaying()
                 }
                 override fun onPlaybackStateChanged(state: Int) {

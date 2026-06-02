@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.SkipNext
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -32,8 +33,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import android.content.Intent
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.watnapp.buddhawajana.core.designsystem.component.CachedAsyncImage
 import com.watnapp.buddhawajana.core.player.PlaybackSpeed
@@ -102,6 +105,7 @@ private fun ActionRow(vm: PlayerViewModel) {
     val isFavorite by vm.isFavorite.collectAsState()
     val now by vm.nowPlaying.collectAsState()
     val downloadState by vm.downloadState.collectAsState()
+    val context = LocalContext.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(24.dp),
@@ -118,6 +122,20 @@ private fun ActionRow(vm: PlayerViewModel) {
             onCancel = vm::cancelDownload,
             onDelete = vm::deleteDownload,
         )
+        IconButton(
+            onClick = {
+                now?.url?.takeIf { it.isNotEmpty() }?.let { url ->
+                    val send = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TEXT, url)
+                    }
+                    context.startActivity(Intent.createChooser(send, null))
+                }
+            },
+            enabled = now != null,
+        ) {
+            Icon(Icons.Default.Share, contentDescription = "แชร์")
+        }
     }
 }
 
