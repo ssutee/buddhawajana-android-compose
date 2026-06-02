@@ -2,6 +2,7 @@ package com.watnapp.buddhawajana.feature.audio.albums
 
 import androidx.lifecycle.viewModelScope
 import com.watnapp.buddhawajana.core.data.repo.AlbumRepository
+import com.watnapp.buddhawajana.core.data.repo.DownloadRepository
 import com.watnapp.buddhawajana.core.data.repo.FavoriteRepository
 import com.watnapp.buddhawajana.core.model.Album
 import com.watnapp.buddhawajana.core.ui.BaseViewModel
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 class AlbumsViewModel(
     private val repo: AlbumRepository,
     favorites: FavoriteRepository,
+    downloads: DownloadRepository,
 ) : BaseViewModel() {
     private val query = MutableStateFlow("")
     val queryState: StateFlow<String> = query.asStateFlow()
@@ -32,6 +34,10 @@ class AlbumsViewModel(
 
     val favoriteCount: StateFlow<Int> =
         favorites.favorites.map { it.size }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
+
+    val downloadCount: StateFlow<Int> =
+        downloads.downloads.map { it.size }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
 
     init { refresh() }

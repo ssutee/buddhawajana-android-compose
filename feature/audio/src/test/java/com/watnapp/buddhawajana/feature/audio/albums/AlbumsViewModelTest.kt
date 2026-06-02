@@ -31,13 +31,18 @@ class AlbumsViewModelTest {
             io.mockk.every { favorites } returns kotlinx.coroutines.flow.flowOf(emptyList())
         }
 
+    private val downloadsRepo: com.watnapp.buddhawajana.core.data.repo.DownloadRepository =
+        io.mockk.mockk(relaxed = true) {
+            io.mockk.every { downloads } returns kotlinx.coroutines.flow.flowOf(emptyList())
+        }
+
     private fun repo(albums: List<Album>): AlbumRepository = mockk(relaxed = true) {
         every { stream() } returns flowOf(albums)
         coEvery { refresh() } returns Result.success(Unit)
     }
 
     @Test fun `emits content from stream`() = runTest {
-        val vm = AlbumsViewModel(repo(listOf(Album("1", "ชุดA", null, 3, 0))), favorites)
+        val vm = AlbumsViewModel(repo(listOf(Album("1", "ชุดA", null, 3, 0))), favorites, downloadsRepo)
         vm.state.test {
             assertEquals(UiState.Loading, awaitItem())
             val content = awaitItem()
@@ -50,7 +55,7 @@ class AlbumsViewModelTest {
         val vm = AlbumsViewModel(repo(listOf(
             Album("1", "ตถาคต", null, 1, 0),
             Album("2", "ภิกษุ", null, 1, 0),
-        )), favorites)
+        )), favorites, downloadsRepo)
         vm.onSearch("ตถา")
         vm.state.test {
             var last: UiState<List<Album>>? = null
@@ -70,8 +75,27 @@ class AlbumsViewModelTest {
                     )
                 )
             }
-        val vm = AlbumsViewModel(repo(emptyList()), favs)
+        val vm = AlbumsViewModel(repo(emptyList()), favs, downloadsRepo)
         vm.favoriteCount.test {
+            var last = 0
+            repeat(2) { last = awaitItem() }
+            org.junit.Assert.assertEquals(2, last)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test fun `downloadCount reflects repo`() = runTest {
+        val dls: com.watnapp.buddhawajana.core.data.repo.DownloadRepository =
+            io.mockk.mockk(relaxed = true) {
+                io.mockk.every { downloads } returns kotlinx.coroutines.flow.flowOf(
+                    listOf(
+                        com.watnapp.buddhawajana.core.model.Download("1", "T", "u", "9", "A", null, 1, 1),
+                        com.watnapp.buddhawajana.core.model.Download("2", "T", "u", "9", "A", null, 1, 2),
+                    )
+                )
+            }
+        val vm = AlbumsViewModel(repo(emptyList()), favorites, dls)
+        vm.downloadCount.test {
             var last = 0
             repeat(2) { last = awaitItem() }
             org.junit.Assert.assertEquals(2, last)

@@ -42,13 +42,16 @@ fun AudioPane(onOpenPlayer: () -> Unit, modifier: Modifier = Modifier) {
             val state by vm.state.collectAsState()
             val query by vm.queryState.collectAsState()
             val favoriteCount by vm.favoriteCount.collectAsState()
+            val downloadCount by vm.downloadCount.collectAsState()
             AlbumsScreen(
                 state = state,
                 query = query,
                 favoriteCount = favoriteCount,
+                downloadCount = downloadCount,
                 onSearch = vm::onSearch,
                 onRefresh = vm::refresh,
                 onOpenFavorites = { nav.navigate(FavoritesRoute) },
+                onOpenDownloads = { nav.navigate(DownloadsRoute) },
                 onOpenAlbum = { album -> nav.navigate(AudioListRoute(album.id, album.title, album.coverUrl)) },
             )
         }

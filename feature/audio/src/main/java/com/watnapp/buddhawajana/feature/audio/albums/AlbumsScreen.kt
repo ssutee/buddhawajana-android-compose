@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -37,9 +38,11 @@ fun AlbumsScreen(
     state: UiState<List<Album>>,
     query: String,
     favoriteCount: Int,
+    downloadCount: Int,
     onSearch: (String) -> Unit,
     onRefresh: () -> Unit,
     onOpenFavorites: () -> Unit,
+    onOpenDownloads: () -> Unit,
     onOpenAlbum: (Album) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -51,6 +54,8 @@ fun AlbumsScreen(
         )
         if (query.isBlank()) {
             FavoritesCard(count = favoriteCount, onClick = onOpenFavorites)
+            HorizontalDivider()
+            DownloadsCard(count = downloadCount, onClick = onOpenDownloads)
             HorizontalDivider()
         }
         when (state) {
@@ -75,6 +80,22 @@ private fun FavoritesCard(count: Int, onClick: () -> Unit) {
             Icon(Icons.Default.Favorite, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
         },
         headlineContent = { Text("รายการโปรด") },
+        trailingContent = {
+            if (count > 0) Text("$count", style = MaterialTheme.typography.bodyMedium)
+            else Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
+        },
+        modifier = Modifier.clickable(onClick = onClick),
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DownloadsCard(count: Int, onClick: () -> Unit) {
+    ListItem(
+        leadingContent = {
+            Icon(Icons.Default.Download, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+        },
+        headlineContent = { Text("ดาวน์โหลด") },
         trailingContent = {
             if (count > 0) Text("$count", style = MaterialTheme.typography.bodyMedium)
             else Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
