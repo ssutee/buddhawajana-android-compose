@@ -20,6 +20,7 @@ data class BookEntity(
     @ColumnInfo(name = "detail") var detail: String = "",
     @ColumnInfo(name = "total_page") var pages: Int = 0,
     @ColumnInfo(name = "producer") var producer: String = "",
+    @ColumnInfo(name = "category") var category: String = "",
     @ColumnInfo(name = "version") var version: String = "",
     @ColumnInfo(name = "request_id") var requestId: String = "",
     @ColumnInfo(name = "added_at") var addedAt: Date = Date(0),

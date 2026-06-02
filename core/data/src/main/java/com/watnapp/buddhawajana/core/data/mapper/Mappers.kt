@@ -20,6 +20,7 @@ fun BookDto.toEntity(): BookEntity = BookEntity(
     position = sortOrder ?: 0,
     pages = totalpage ?: 0,
     producer = producer ?: "",
+    category = category ?: "",
     // remaining columns keep entity defaults
     progress = 0,
     status = 0,
@@ -37,6 +38,7 @@ fun BookEntity.toModel(): Book = Book(
     fileUrl = bookUrl.ifEmpty { null },
     totalPage = pages,
     producer = producer.ifEmpty { null },
+    category = category.ifEmpty { null },
     orderNumber = position,
 )
 

@@ -7,5 +7,6 @@ data class Book(
     val fileUrl: String?,
     val totalPage: Int?,
     val producer: String?,
+    val category: String?,
     val orderNumber: Int,
 )

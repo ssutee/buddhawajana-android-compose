@@ -10,4 +10,5 @@ data class BookDto(
     val producer: String?,
     val file: String?,
     val cover: String?,
+    val category: String?,
 )
