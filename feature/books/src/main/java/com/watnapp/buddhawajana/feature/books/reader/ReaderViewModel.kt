@@ -9,6 +9,7 @@ import com.watnapp.buddhawajana.core.data.repo.BookmarkRepository
 import com.watnapp.buddhawajana.core.data.repo.ReadingProgressRepository
 import com.watnapp.buddhawajana.core.model.Bookmark
 import com.watnapp.buddhawajana.core.ui.BaseViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,7 +37,7 @@ class ReaderViewModel(
     private val _state = MutableStateFlow<ReaderState>(ReaderState.Loading)
     val state: StateFlow<ReaderState> = _state.asStateFlow()
 
-    val bookmarksFor = bookmarks.stream(bookId)
+    val bookmarksFor: Flow<List<Bookmark>> = bookmarks.stream(bookId)
 
     private val _page = MutableStateFlow(0)
     val page: StateFlow<Int> = _page.asStateFlow()

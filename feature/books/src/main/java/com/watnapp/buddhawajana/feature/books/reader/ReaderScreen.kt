@@ -33,8 +33,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.Image
 import com.watnapp.buddhawajana.core.model.Bookmark
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -165,8 +167,9 @@ private fun ReaderBottomBar(
     pageCount: Int,
     onScrollToPage: (Int) -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
     var showGotoDialog by remember { mutableStateOf(false) }
+    var draft by remember { mutableFloatStateOf(currentPage.toFloat()) }
+    LaunchedEffect(currentPage) { draft = currentPage.toFloat() }
 
     Surface(
         tonalElevation = 4.dp,
@@ -174,11 +177,10 @@ private fun ReaderBottomBar(
     ) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
             Slider(
-                value = currentPage.toFloat(),
-                onValueChange = { /* live update handled on finish */ },
-                onValueChangeFinished = { /* no live value so nothing here */ },
+                value = draft,
+                onValueChange = { draft = it },
+                onValueChangeFinished = { onScrollToPage(draft.roundToInt()) },
                 valueRange = 0f..(pageCount - 1).coerceAtLeast(1).toFloat(),
-                steps = 0,
                 modifier = Modifier.fillMaxWidth(),
             )
             Row(
@@ -266,7 +268,6 @@ private fun PdfPager(
     onToggleChrome: () -> Unit,
 ) {
     val pagerState = rememberPagerState(initialPage = ready.startPage) { ready.pageCount }
-    val scope = rememberCoroutineScope()
 
     // Persist page changes
     LaunchedEffect(pagerState) {
@@ -307,7 +308,9 @@ private fun PdfPage(
         }
     }
 
-    val bitmap = remember(index, widthPx) { pdf.renderPage(index, widthPx) }
+    val bitmap by produceState<android.graphics.Bitmap?>(null, index, widthPx) {
+        value = withContext(Dispatchers.IO) { pdf.renderPage(index, widthPx) }
+    }
 
     var scale by remember(index) { mutableFloatStateOf(1f) }
     var offsetX by remember(index) { mutableFloatStateOf(0f) }
@@ -330,19 +333,25 @@ private fun PdfPage(
             },
         contentAlignment = Alignment.Center,
     ) {
-        Image(
-            bitmap = bitmap.asImageBitmap(),
-            contentDescription = "หน้า ${index + 1}",
-            contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .fillMaxSize()
-                .graphicsLayer(
-                    scaleX = scale,
-                    scaleY = scale,
-                    translationX = offsetX,
-                    translationY = offsetY,
-                ),
-        )
+        if (bitmap == null) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        } else {
+            Image(
+                bitmap = bitmap!!.asImageBitmap(),
+                contentDescription = "หน้า ${index + 1}",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer(
+                        scaleX = scale,
+                        scaleY = scale,
+                        translationX = offsetX,
+                        translationY = offsetY,
+                    ),
+            )
+        }
     }
 }
 
