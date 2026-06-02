@@ -326,18 +326,39 @@ private fun PdfPage(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            // Tap toggles chrome; double-tap toggles zoom. detectTapGestures does NOT
+            // consume drags, so at scale 1 the horizontal swipe reaches HorizontalPager.
             .pointerInput(index) {
                 detectTapGestures(
                     onTap = { onToggleChrome() },
+                    onDoubleTap = {
+                        if (scale > 1f) {
+                            scale = 1f; offsetX = 0f; offsetY = 0f
+                        } else {
+                            scale = 2.5f
+                        }
+                    },
                 )
             }
-            .pointerInput(index) {
-                detectTransformGestures { _, pan, zoom, _ ->
-                    scale = (scale * zoom).coerceIn(1f, 5f)
-                    offsetX += pan.x
-                    offsetY += pan.y
+            // Pan/pinch detector ONLY while zoomed. detectTransformGestures consumes
+            // drags, which would otherwise block the pager's swipe-to-turn at scale 1.
+            .then(
+                if (scale > 1f) {
+                    Modifier.pointerInput(index) {
+                        detectTransformGestures { _, pan, zoom, _ ->
+                            scale = (scale * zoom).coerceIn(1f, 5f)
+                            if (scale > 1f) {
+                                offsetX += pan.x
+                                offsetY += pan.y
+                            } else {
+                                offsetX = 0f; offsetY = 0f
+                            }
+                        }
+                    }
+                } else {
+                    Modifier
                 }
-            },
+            ),
         contentAlignment = Alignment.Center,
     ) {
         if (bitmap == null) {
