@@ -9,6 +9,7 @@ import com.watnapp.buddhawajana.core.data.repo.AlbumRepository
 import com.watnapp.buddhawajana.core.data.repo.AudioRepository
 import com.watnapp.buddhawajana.core.data.repo.BookmarkRepository
 import com.watnapp.buddhawajana.core.data.repo.BookRepository
+import com.watnapp.buddhawajana.core.data.repo.FavoriteRepository
 import com.watnapp.buddhawajana.core.data.repo.PlaybackProgressRepository
 import com.watnapp.buddhawajana.core.data.repo.ReadingProgressRepository
 import okhttp3.OkHttpClient
@@ -18,7 +19,7 @@ import org.koin.dsl.module
 val dataModule = module {
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, AppDatabase.NAME)
-            .addMigrations(AppDatabase.MIGRATION_1_2)
+            .addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3)
             .build()
     }
     single { get<AppDatabase>().bookDao() }
@@ -27,6 +28,7 @@ val dataModule = module {
     single { get<AppDatabase>().bookmarkDao() }
     single { get<AppDatabase>().readingProgressDao() }
     single { get<AppDatabase>().playbackProgressDao() }
+    single { get<AppDatabase>().favoriteDao() }
     single { BookRepository(get(), get()) }
     single { AlbumRepository(get(), get()) }
     single { AudioRepository(get(), get(), get()) }
@@ -36,4 +38,5 @@ val dataModule = module {
     single { MetadataProber(get<OkHttpClient>()) }
     single { BookFileStore(androidContext()) }
     single { PlaybackProgressRepository(get()) }
+    single { FavoriteRepository(get()) }
 }
