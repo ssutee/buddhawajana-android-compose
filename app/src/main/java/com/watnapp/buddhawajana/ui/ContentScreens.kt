@@ -51,12 +51,6 @@ fun BooksScreenPreview() {
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun AudioScreenPreview() {
-    AudioScreen(windowSize = WindowSize.Expanded)
-}
-
 @Composable
 fun YoutubeScreen() {
     val context = LocalContext.current

@@ -135,7 +135,6 @@ dependencies {
     implementation(libs.compose.html)
     implementation(libs.pdf.viewer)
     implementation(libs.androidx.window)
-    implementation(libs.arg.player)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)

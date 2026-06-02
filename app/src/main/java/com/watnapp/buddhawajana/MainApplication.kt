@@ -6,12 +6,8 @@ import com.watnapp.buddhawajana.core.network.networkModule
 import com.watnapp.buddhawajana.core.player.playerModule
 import com.watnapp.buddhawajana.feature.audio.audioModule
 import com.watnapp.buddhawajana.feature.books.booksModule
-import com.watnapp.buddhawajana.repository.AlbumRepository
-import com.watnapp.buddhawajana.repository.AudioRepository
 import com.watnapp.buddhawajana.repository.BookRepository
 import com.watnapp.buddhawajana.vm.BookViewModel
-import com.watnapp.buddhawajana.vm.AlbumViewModel
-import com.watnapp.buddhawajana.vm.AudioViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -42,9 +38,4 @@ val appModule = module {
     single { BookRepository(get()) }
     viewModel { BookViewModel(get()) }
 
-    single { AlbumRepository(get()) }
-    viewModel { AlbumViewModel(get()) }
-
-    single { AudioRepository(get()) }
-    viewModel { AudioViewModel(get()) }
 }
