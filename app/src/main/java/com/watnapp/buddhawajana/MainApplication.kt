@@ -1,7 +1,9 @@
 package com.watnapp.buddhawajana
 
 import android.app.Application
+import com.watnapp.buddhawajana.core.data.dataModule
 import com.watnapp.buddhawajana.core.network.networkModule
+import com.watnapp.buddhawajana.feature.books.booksModule
 import com.watnapp.buddhawajana.repository.AlbumRepository
 import com.watnapp.buddhawajana.repository.AudioRepository
 import com.watnapp.buddhawajana.repository.BookRepository
@@ -21,12 +23,13 @@ class MainApplication : Application() {
             androidLogger()
             androidContext(this@MainApplication)
             // networkModule: provides OkHttpClient/Moshi/Retrofit (new core:network).
-            // dataModule is intentionally NOT included here: both the legacy appModule and
-            // core:data's dataModule define a single AppDatabase("watna-compose.db"), which
-            // would cause a Koin duplicate-definition conflict. The legacy appModule owns
-            // the DB for now; Task 11 will migrate the legacy screens to core:data and
-            // then switch to dataModule exclusively.
-            modules(networkModule, appModule)
+            // dataModule: provides the new AppDatabase ("buddhawajana.db") — a DIFFERENT
+            //   Kotlin class (com.watnapp.buddhawajana.core.data.db.AppDatabase) from the
+            //   legacy AppDatabase ("watna-compose.db") in appModule, so no Koin
+            //   duplicate-type conflict.
+            // booksModule: provides BookListViewModel and ReaderViewModel for :feature:books.
+            // appModule: legacy Audio/YouTube DI (kept until Task 11 migration).
+            modules(networkModule, dataModule, booksModule, appModule)
         }
     }
 }
