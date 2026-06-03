@@ -2,12 +2,16 @@ package com.watnapp.buddhawajana.feature.audio.player
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.FastRewind
@@ -50,53 +54,102 @@ fun PlayerScreen(vm: PlayerViewModel, onBack: () -> Unit, modifier: Modifier = M
     val position by vm.positionMs.collectAsState()
     val duration by vm.durationMs.collectAsState()
 
-    Column(
-        modifier.fillMaxSize().padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly,
-    ) {
-        Row(Modifier.fillMaxWidth()) {
-            IconButton(onClick = onBack) { Icon(Icons.Default.KeyboardArrowDown, "ย่อ") }
+    // Adaptive layout: a single Column stacks art + controls vertically, which only fits when the
+    // viewport is tall (portrait). In landscape the square art (sized by width) would overflow the
+    // short height and push the controls off-screen, so split into art | controls side-by-side.
+    BoxWithConstraints(modifier.fillMaxSize()) {
+        if (maxWidth < maxHeight) {
+            // PORTRAIT
+            Column(
+                Modifier.fillMaxSize().padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceEvenly,
+            ) {
+                Row(Modifier.fillMaxWidth()) { MinimizeButton(onBack) }
+                Artwork(now?.artworkUrl, now?.title, Modifier.fillMaxWidth(0.8f).aspectRatio(1f))
+                TrackInfo(now?.title, now?.album)
+                SeekSection(vm, position, duration)
+                TransportRow(vm, isPlaying)
+                SpeedAndSleepRow(vm)
+                ActionRow(vm)
+            }
+        } else {
+            // LANDSCAPE — art on the left, scrollable controls on the right.
+            Row(
+                Modifier.fillMaxSize().padding(24.dp),
+                horizontalArrangement = Arrangement.spacedBy(24.dp),
+            ) {
+                Column(Modifier.weight(1f).fillMaxHeight()) {
+                    Row(Modifier.fillMaxWidth()) { MinimizeButton(onBack) }
+                    Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        // fillMaxSize + aspectRatio(1f) => largest square fitting the box (min side),
+                        // so the art never overflows regardless of the box's width/height.
+                        Artwork(now?.artworkUrl, now?.title, Modifier.fillMaxSize().aspectRatio(1f))
+                    }
+                }
+                Column(
+                    Modifier.weight(1f).fillMaxHeight().verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+                ) {
+                    TrackInfo(now?.title, now?.album)
+                    SeekSection(vm, position, duration)
+                    TransportRow(vm, isPlaying)
+                    SpeedAndSleepRow(vm)
+                    ActionRow(vm)
+                }
+            }
         }
-        CachedAsyncImage(
-            url = now?.artworkUrl,
-            contentDescription = now?.title,
-            modifier = Modifier.fillMaxWidth(0.8f).aspectRatio(1f),
+    }
+}
+
+@Composable
+private fun MinimizeButton(onBack: () -> Unit) {
+    IconButton(onClick = onBack) { Icon(Icons.Default.KeyboardArrowDown, "ย่อ") }
+}
+
+@Composable
+private fun Artwork(url: String?, contentDescription: String?, modifier: Modifier) {
+    CachedAsyncImage(url = url, contentDescription = contentDescription, modifier = modifier)
+}
+
+@Composable
+private fun TrackInfo(title: String?, album: String?) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(title ?: "", style = MaterialTheme.typography.titleLarge)
+        Text(album ?: "", style = MaterialTheme.typography.bodyMedium)
+    }
+}
+
+@Composable
+private fun SeekSection(vm: PlayerViewModel, position: Long, duration: Long) {
+    var dragging by remember { mutableStateOf(false) }
+    var draft by remember { mutableStateOf(0f) }
+    val shown = if (dragging) draft else position.toFloat()
+    Column(Modifier.fillMaxWidth()) {
+        Slider(
+            value = shown,
+            valueRange = 0f..(duration.toFloat().coerceAtLeast(1f)),
+            onValueChange = { dragging = true; draft = it },
+            onValueChangeFinished = { if (dragging) { vm.seekTo(draft.toLong()); dragging = false } },
         )
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(now?.title ?: "", style = MaterialTheme.typography.titleLarge)
-            Text(now?.album ?: "", style = MaterialTheme.typography.bodyMedium)
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(formatTime(shown.toLong()))
+            Text(formatTime(duration))
         }
+    }
+}
 
-        var dragging by remember { mutableStateOf(false) }
-        var draft by remember { mutableStateOf(0f) }
-        val shown = if (dragging) draft else position.toFloat()
-        Column(Modifier.fillMaxWidth()) {
-            Slider(
-                value = shown,
-                valueRange = 0f..(duration.toFloat().coerceAtLeast(1f)),
-                onValueChange = { dragging = true; draft = it },
-                onValueChangeFinished = { if (dragging) { vm.seekTo(draft.toLong()); dragging = false } },
-            )
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(formatTime(shown.toLong()))
-                Text(formatTime(duration))
-            }
+@Composable
+private fun TransportRow(vm: PlayerViewModel, isPlaying: Boolean) {
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        IconButton(onClick = vm::prev) { Icon(Icons.Default.SkipPrevious, "ก่อนหน้า") }
+        IconButton(onClick = vm::skipBack) { Icon(Icons.Default.FastRewind, "ถอย 15 วิ") }
+        IconButton(onClick = vm::playPause) {
+            Icon(if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow, "เล่น/หยุด")
         }
-
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            IconButton(onClick = vm::prev) { Icon(Icons.Default.SkipPrevious, "ก่อนหน้า") }
-            IconButton(onClick = vm::skipBack) { Icon(Icons.Default.FastRewind, "ถอย 15 วิ") }
-            IconButton(onClick = vm::playPause) {
-                Icon(if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow, "เล่น/หยุด")
-            }
-            IconButton(onClick = vm::skipForward) { Icon(Icons.Default.FastForward, "เดิน 15 วิ") }
-            IconButton(onClick = vm::next) { Icon(Icons.Default.SkipNext, "ถัดไป") }
-        }
-
-        SpeedAndSleepRow(vm)
-
-        ActionRow(vm)
+        IconButton(onClick = vm::skipForward) { Icon(Icons.Default.FastForward, "เดิน 15 วิ") }
+        IconButton(onClick = vm::next) { Icon(Icons.Default.SkipNext, "ถัดไป") }
     }
 }
 
